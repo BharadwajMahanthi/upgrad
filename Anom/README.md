@@ -4,7 +4,7 @@ This project is aimed at predicting machine breakdown by identifying anomalies i
 
 ## Project Structure
 
-```plaintext
+```bash
 ├── src
 │   ├── data
 │   │   └── load_data.py        # Loads and preprocesses the dataset
