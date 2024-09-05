@@ -2,6 +2,25 @@
 
 This project is aimed at predicting machine breakdown by identifying anomalies in the provided dataset. The dataset contains binary labels (1 for anomaly and 0 for normal) along with several predictive features.
 
+## Project Structure
+
+```plaintext
+├── src
+│   ├── data
+│   │   └── load_data.py        # Loads and preprocesses the dataset
+│   ├── features
+│   │   └── build_features.py   # Creates feature engineering pipelines
+│   ├── models
+│   │   └── train_model.py      # Trains the model and saves results
+│   └── app.py                  # Flask API for making predictions
+├── models
+│   └── best_random_forest_model.pkl  # Trained model saved for deployment
+├── data
+│   └── raw                     # Raw data files
+│   └── processed               # Processed data files
+├── visualization               # Contains saved visualizations
+├── reports                     # Project reports, model evaluation PDF
+├── README.md                   # Project documentation
 ## Project Overview
 
 Predictive maintenance solutions are crucial for minimizing risks and taking preventive actions. This project builds a machine learning model to predict machine breakdown using a Random Forest Classifier. The main steps involved are:
