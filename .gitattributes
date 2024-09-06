@@ -1,0 +1,5 @@
+FindDefault/data/processed/X_features_resampled.csv filter=lfs diff=lfs merge=lfs -text
+FindDefault/data/processed/cleaned_data.csv filter=lfs diff=lfs merge=lfs -text
+FindDefault/data/processed/preprocessed_data.csv filter=lfs diff=lfs merge=lfs -text
+FindDefault/data/raw/creditcard.csv filter=lfs diff=lfs merge=lfs -text
+FindDefault/data/processed/X_scaled.csv filter=lfs diff=lfs merge=lfs -text
