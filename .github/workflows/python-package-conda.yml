@@ -24,6 +24,11 @@ jobs:
         python-version: 3.10
         auto-activate-base: false
 
+    # Add conda to PATH using environment files
+    - name: Add conda to PATH
+      run: |
+        echo "/usr/share/miniconda/condabin" >> $GITHUB_PATH
+
     # Install dependencies based on the environment.yml files for each project
     - name: Install dependencies for FindDefault
       run: |
