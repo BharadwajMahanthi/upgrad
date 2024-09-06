@@ -1,0 +1,56 @@
+name: Python Package using Conda
+
+on: [push]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Set up Python environment
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10'
+
+    # Install Miniconda
+    - name: Install Miniconda
+      uses: goanpeca/setup-miniconda@v1
+      with:
+        python-version: 3.10
+        auto-activate-base: false
+
+    # Install dependencies based on the environment.yml files for each project
+    - name: Install dependencies for FindDefault
+      run: |
+        conda env update --file FindDefault/environment.yml --name base
+    
+    - name: Install dependencies for Anom (if applicable)
+      run: |
+        conda env update --file Anom/environment.yml --name base
+
+    # Linting for both projects with flake8
+    - name: Lint FindDefault with flake8
+      run: |
+        conda install flake8
+        flake8 FindDefault/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 FindDefault/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Lint Anom with flake8 (if applicable)
+      run: |
+        flake8 Anom/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 Anom/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    # Test the models using pytest for both projects
+    - name: Test FindDefault with pytest
+      run: |
+        conda install pytest
+        pytest FindDefault/
+
+    - name: Test Anom with pytest (if applicable)
+      run: |
+        pytest Anom/
