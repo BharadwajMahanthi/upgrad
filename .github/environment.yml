@@ -1,0 +1,22 @@
+name: upgrad-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - jupyter
+  - flake8
+  - pytest
+  - xgboost
+  - tensorflow
+  - pip:
+    - imbalanced-learn
+    - joblib
+    - mlxtend
+    - pytest-cov
