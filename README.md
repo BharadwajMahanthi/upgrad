@@ -1,16 +1,20 @@
-# upgrad Knowledgehut ![image](https://github.com/user-attachments/assets/4fb2d67f-fd69-4cc8-bb45-bce555143f74)
+Here’s an updated version of the README file that includes the new **Fire Detection** project along with the existing **FindDefault** and **Anom** projects, and references future projects:
 
+---
+
+# upGrad Knowledgehut ![image](https://github.com/user-attachments/assets/4fb2d67f-fd69-4cc8-bb45-bce555143f74)
 
 # Main Branch Projects
 
 ## Overview
 
-This repository hosts multiple data science and machine learning projects, with a focus on predictive modeling and anomaly detection. Each project is dedicated to solving real-world problems using machine learning techniques, automation, and best practices in data science.
+This repository hosts multiple data science and machine learning projects, with a focus on predictive modeling, anomaly detection, fire detection, and future projects in deep learning and AI. Each project aims to solve real-world problems using machine learning techniques, automation, and best practices in data science.
 
 ### Current Projects:
 1. **FindDefault**: Predicting loan defaults using logistic regression.
-2. **Anom**: Anomaly detection using machine learning techniques (placeholder).
-3. **Upcoming Projects from UpGrad**: More projects to be added from UpGrad courses and capstone projects.
+2. **Anom**: Anomaly detection using machine learning techniques.
+3. **Fire Detection**: A deep learning-based system for detecting fire and smoke in images using CNN, MobileNetV2, and other models.
+4. **Upcoming Projects from UpGrad**: More projects to be added from UpGrad courses and capstone projects.
 
 ---
 
@@ -65,13 +69,13 @@ FindDefault/
 
 ---
 
-## 2. **Anom Project** (Placeholder)
+## 2. **Anom Project**
 
 ### Project Overview
 
 The **Anom** project is focused on detecting anomalies in a given dataset. This project involves using advanced machine learning models to classify anomalies, particularly in high-dimensional data.
 
-### Project Structure (Placeholder)
+### Project Structure
 
 ```plaintext
 Anom/
@@ -95,13 +99,47 @@ Anom/
 │       └── train_anom_model.py           # Script to train the anomaly detection model
 ```
 
-### Key Points (Placeholder)
-- **Anomaly Detection**: The project will focus on detecting anomalies in the dataset using advanced algorithms like Isolation Forest, One-Class SVM, or Autoencoders.
-- **Preprocessing and Feature Engineering**: Similar to the FindDefault project, automated data pipelines will be created for preprocessing and feature engineering.
+### Key Points
+- **Anomaly Detection**: The project focuses on detecting anomalies using models like Isolation Forest, One-Class SVM, and Autoencoders.
+- **Preprocessing and Feature Engineering**: Automated data pipelines for preprocessing and feature engineering.
 
 ---
 
-## 3. **Upcoming Projects from UpGrad**
+## 3. **Fire Detection Project**
+
+### Project Overview
+
+The **Fire Detection** project leverages deep learning to detect fire and smoke in real-time images using CNN, MobileNetV2, and other architectures. The dataset is sourced from Kaggle and includes images categorized as fire, smoke, and non-fire.
+
+- **Dataset**: [Forest Fire, Smoke, and Non-Fire Image Dataset](https://www.kaggle.com/datasets/amerzishminha/forest-fire-smoke-and-non-fire-image-dataset/data)
+
+### Project Structure
+
+```plaintext
+FireDetection/
+│
+├── keras_tuner/                          # Keras Tuner hyperparameter tuning outputs
+├── output/                               # Directory for saved models and outputs
+├── templates/                            # Templates for any web application views
+│
+├── app.py                                # Main Python file for Flask app
+├── Classification.ipynb                  # Jupyter notebook for fire detection model training
+├── fire_detection.h5                     # Saved H5 model file
+├── Readme.md                             # Project README file
+```
+### Key Points
+
+- **Multi-Model Approach**: Uses CNN, MobileNetV2, and other architectures.
+- **Hyperparameter Tuning**: Leverages Keras Tuner for optimizing model performance.
+- **GPU Acceleration**: Implements CUDA and mixed precision for faster model training.
+
+### GPU, CUDA, and NVIDIA Support
+
+The project supports GPU acceleration using **CUDA** and **NVIDIA Tensor Cores** for fast training. The models are configured to use mixed precision for improved performance on compatible GPUs.
+
+---
+
+## 4. **Upcoming Projects from UpGrad**
 
 ### Future Projects
 
@@ -127,7 +165,7 @@ Each future project will follow a similar structure, with data handling, model b
    ```
 
 2. **Navigate to Individual Projects**:
-   Each project is contained within its own folder (e.g., `FindDefault/`, `Anom/`). Navigate into the relevant folder to explore data, models, and notebooks.
+   Each project is contained within its own folder (e.g., `FindDefault/`, `Anom/`, `FireDetection/`). Navigate into the relevant folder to explore data, models, and notebooks.
 
 3. **Run the Notebooks**:
    You can explore the Jupyter notebooks provided in each project to see the preprocessing, feature engineering, and model training steps.
@@ -139,6 +177,8 @@ Each future project will follow a similar structure, with data handling, model b
 
 ## Conclusion
 
-This repository is a growing collection of machine learning projects focusing on predictive modeling, anomaly detection, and other real-world applications. Each project prioritizes automation, model-driven insights, and scalability in its approach.
+This repository is a growing collection of machine learning and deep learning projects focusing on predictive modeling, anomaly detection, fire detection, and other real-world applications. Each project prioritizes automation, model-driven insights, and scalability in its approach.
 
 ---
+
+This README now includes the **Fire Detection** project and updates for the upcoming projects. Let me know if you would like to further refine or add more details!
