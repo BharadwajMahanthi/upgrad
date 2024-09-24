@@ -110,3 +110,5 @@ celerybeat-schedule
 
 # mypy
 .mypy_cache/
+
+upgrad-backup.git/
