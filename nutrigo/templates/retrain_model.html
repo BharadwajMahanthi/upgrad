@@ -1,0 +1,22 @@
+<!-- templates/retrain_model.html -->
+{% extends "base.html" %}
+
+{% block title %}Retrain Model - Recipe Recommendation System{% endblock %}
+
+{% block content %}
+    <h1>Retrain Recommendation Model</h1>
+    <form method="post">
+        <p>Click the button below to retrain the recommendation model.</p>
+        <input type="submit" value="Retrain Model">
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+{% endblock %}

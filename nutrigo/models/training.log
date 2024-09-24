@@ -1,0 +1,570 @@
+2024-09-22 23:09:42,955:INFO:1 CPU device(s) found.
+2024-09-22 23:09:42,959:INFO:Loading Core Recipe Data...
+2024-09-22 23:09:44,962:INFO:Core Recipes Shape: (45630, 6)
+2024-09-22 23:09:44,963:INFO:Core Recipes Columns: ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'nutritions']
+2024-09-22 23:09:44,963:INFO:Loading Raw Recipe Data...
+2024-09-22 23:10:02,089:INFO:Raw Recipes Shape: (49698, 9)
+2024-09-22 23:10:02,090:INFO:Raw Recipes Columns: ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'nutritions', 'reviews']
+2024-09-22 23:10:02,091:INFO:Loading Interaction Data...
+2024-09-22 23:10:02,800:INFO:Core Train Shape: (676946, 4)
+2024-09-22 23:10:02,801:INFO:Core Train Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:10:02,976:INFO:Core Validation Shape: (133459, 4)
+2024-09-22 23:10:02,978:INFO:Core Validation Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:10:03,310:INFO:Core Test Shape: (283440, 4)
+2024-09-22 23:10:03,311:INFO:Core Test Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:10:06,936:INFO:Raw Interactions Shape: (3794003, 4)
+2024-09-22 23:10:06,937:INFO:Raw Interactions Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:10:06,938:INFO:Handling Missing Values...
+2024-09-22 23:10:06,940:INFO:Using 'recipe_name' as the recipe name column.
+2024-09-22 23:10:06,959:INFO:Using 'recipe_name' as the recipe name column for raw_recipes.
+2024-09-22 23:10:07,437:INFO:Missing values handled.
+2024-09-22 23:10:07,437:INFO:Encoding Categorical Variables...
+2024-09-22 23:10:25,199:INFO:Categorical variables encoded.
+2024-09-22 23:10:25,200:INFO:Preprocessing Text Data...
+2024-09-22 23:10:57,627:INFO:Text data preprocessed.
+2024-09-22 23:10:58,079:INFO:Label encoders saved.
+2024-09-22 23:10:58,081:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-22 23:11:29,044:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-22 23:11:29,044:INFO:Parsing 'nutritions' column completed.
+2024-09-22 23:11:29,371:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-22 23:12:03,742:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'reviews', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-22 23:12:03,743:INFO:Parsing 'nutritions' column completed.
+2024-09-22 23:12:04,289:INFO:Vectorizing Ingredients with TF-IDF...
+2024-09-22 23:12:04,290:INFO:Loading TF-IDF Vectorizer from tfidf_vectorizer.pkl...
+2024-09-22 23:12:05,312:INFO:Ingredient vectorization completed.
+2024-09-22 23:12:05,313:INFO:Scaling Nutritional Features...
+2024-09-22 23:12:05,350:INFO:Loading Scaler from scaler.pkl...
+2024-09-22 23:12:05,370:INFO:Nutritional features scaled.
+2024-09-22 23:12:05,371:INFO:Extracting Image Features...
+2024-09-22 23:12:07,019:INFO:Loading image features from core_image_features.npy...
+2024-09-22 23:12:07,278:INFO:Loading image features from raw_image_features.npy...
+2024-09-22 23:12:07,440:INFO:Image feature extraction completed.
+2024-09-22 23:12:07,441:INFO:Building Recommender System using SVD...
+2024-09-22 23:12:09,553:INFO:Training SVD Model...
+2024-09-22 23:12:23,082:INFO:SVD model training completed.
+2024-09-22 23:12:41,137:INFO:SVD model saved to svd_model.pkl.
+2024-09-22 23:12:41,233:INFO:Evaluating Recommender System with SVD Model...
+2024-09-22 23:12:41,265:ERROR:An error occurred: 'DataFrame' object has no attribute 'raw_ratings'
+Traceback (most recent call last):
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_22100\1283994147.py", line 1004, in main
+    evaluate_recommender_svd(svd_model, None, all_core_interactions)
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_22100\1283994147.py", line 841, in evaluate_recommender_svd
+    trainset, testset = surprise_train_test_split(all_core_interactions[['user_id_encoded', 'recipe_id_encoded', 'rating']], test_size=0.2, random_state=42)
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\surprise\model_selection\split.py", line 355, in train_test_split
+    return next(ss.split(data))
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\surprise\model_selection\split.py", line 289, in split
+    self.test_size, self.train_size, len(data.raw_ratings)
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\generic.py", line 6299, in __getattr__
+    return object.__getattribute__(self, name)
+AttributeError: 'DataFrame' object has no attribute 'raw_ratings'
+2024-09-22 23:14:47,488:INFO:1 CPU device(s) found.
+2024-09-22 23:14:47,493:INFO:Loading Core Recipe Data...
+2024-09-22 23:14:49,555:INFO:Core Recipes Shape: (45630, 6)
+2024-09-22 23:14:49,555:INFO:Core Recipes Columns: ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'nutritions']
+2024-09-22 23:14:49,556:INFO:Loading Raw Recipe Data...
+2024-09-22 23:15:05,328:INFO:Raw Recipes Shape: (49698, 9)
+2024-09-22 23:15:05,330:INFO:Raw Recipes Columns: ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'nutritions', 'reviews']
+2024-09-22 23:15:05,332:INFO:Loading Interaction Data...
+2024-09-22 23:15:06,002:INFO:Core Train Shape: (676946, 4)
+2024-09-22 23:15:06,003:INFO:Core Train Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:15:06,111:INFO:Core Validation Shape: (133459, 4)
+2024-09-22 23:15:06,113:INFO:Core Validation Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:15:06,329:INFO:Core Test Shape: (283440, 4)
+2024-09-22 23:15:06,330:INFO:Core Test Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:15:09,019:INFO:Raw Interactions Shape: (3794003, 4)
+2024-09-22 23:15:09,019:INFO:Raw Interactions Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:15:09,020:INFO:Handling Missing Values...
+2024-09-22 23:15:09,021:INFO:Using 'recipe_name' as the recipe name column.
+2024-09-22 23:15:09,035:INFO:Using 'recipe_name' as the recipe name column for raw_recipes.
+2024-09-22 23:15:09,403:INFO:Missing values handled.
+2024-09-22 23:15:09,403:INFO:Encoding Categorical Variables...
+2024-09-22 23:15:25,131:INFO:Categorical variables encoded.
+2024-09-22 23:15:25,132:INFO:Preprocessing Text Data...
+2024-09-22 23:15:56,542:INFO:Text data preprocessed.
+2024-09-22 23:15:57,006:INFO:Label encoders saved.
+2024-09-22 23:15:57,008:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-22 23:16:27,689:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-22 23:16:27,691:INFO:Parsing 'nutritions' column completed.
+2024-09-22 23:16:28,016:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-22 23:17:00,880:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'reviews', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-22 23:17:00,881:INFO:Parsing 'nutritions' column completed.
+2024-09-22 23:17:01,314:INFO:Vectorizing Ingredients with TF-IDF...
+2024-09-22 23:17:01,315:INFO:Loading TF-IDF Vectorizer from tfidf_vectorizer.pkl...
+2024-09-22 23:17:02,398:INFO:Ingredient vectorization completed.
+2024-09-22 23:17:02,398:INFO:Scaling Nutritional Features...
+2024-09-22 23:17:02,424:INFO:Loading Scaler from scaler.pkl...
+2024-09-22 23:17:02,441:INFO:Nutritional features scaled.
+2024-09-22 23:17:02,442:INFO:Extracting Image Features...
+2024-09-22 23:17:04,033:INFO:Loading image features from core_image_features.npy...
+2024-09-22 23:17:04,182:INFO:Loaded image features from core_image_features.npy. Shape: (45630, 1024)
+2024-09-22 23:17:04,183:INFO:Loading image features from raw_image_features.npy...
+2024-09-22 23:17:04,351:INFO:Loaded image features from raw_image_features.npy. Shape: (49698, 1024)
+2024-09-22 23:17:04,352:INFO:Image feature extraction completed.
+2024-09-22 23:17:04,353:INFO:Building Recommender System using SVD...
+2024-09-22 23:17:06,284:INFO:Training SVD Model...
+2024-09-22 23:17:19,229:INFO:SVD model training completed.
+2024-09-22 23:17:36,843:INFO:SVD model saved to svd_model.pkl.
+2024-09-22 23:17:36,898:INFO:Evaluating Recommender System with SVD Model...
+2024-09-22 23:17:36,910:ERROR:An error occurred: 'DataFrame' object has no attribute 'raw_ratings'
+Traceback (most recent call last):
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_3160\2954857432.py", line 901, in main
+    evaluate_recommender_svd(svd_model, None, all_core_interactions)
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_3160\2954857432.py", line 738, in evaluate_recommender_svd
+    trainset, testset = surprise_train_test_split(all_core_interactions[['user_id_encoded', 'recipe_id_encoded', 'rating']], test_size=0.2, random_state=42)
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\surprise\model_selection\split.py", line 355, in train_test_split
+    return next(ss.split(data))
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\surprise\model_selection\split.py", line 289, in split
+    self.test_size, self.train_size, len(data.raw_ratings)
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\generic.py", line 6299, in __getattr__
+    return object.__getattribute__(self, name)
+AttributeError: 'DataFrame' object has no attribute 'raw_ratings'
+2024-09-22 23:18:15,521:INFO:1 CPU device(s) found.
+2024-09-22 23:18:15,528:INFO:Loading Core Recipe Data...
+2024-09-22 23:18:17,516:INFO:Core Recipes Shape: (45630, 6)
+2024-09-22 23:18:17,517:INFO:Core Recipes Columns: ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'nutritions']
+2024-09-22 23:18:17,518:INFO:Loading Raw Recipe Data...
+2024-09-22 23:18:33,809:INFO:Raw Recipes Shape: (49698, 9)
+2024-09-22 23:18:33,809:INFO:Raw Recipes Columns: ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'nutritions', 'reviews']
+2024-09-22 23:18:33,810:INFO:Loading Interaction Data...
+2024-09-22 23:18:34,261:INFO:Core Train Shape: (676946, 4)
+2024-09-22 23:18:34,262:INFO:Core Train Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:18:34,372:INFO:Core Validation Shape: (133459, 4)
+2024-09-22 23:18:34,373:INFO:Core Validation Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:18:34,585:INFO:Core Test Shape: (283440, 4)
+2024-09-22 23:18:34,586:INFO:Core Test Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:18:37,025:INFO:Raw Interactions Shape: (3794003, 4)
+2024-09-22 23:18:37,025:INFO:Raw Interactions Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-22 23:18:37,026:INFO:Handling Missing Values...
+2024-09-22 23:18:37,027:INFO:Using 'recipe_name' as the recipe name column.
+2024-09-22 23:18:37,040:INFO:Using 'recipe_name' as the recipe name column for raw_recipes.
+2024-09-22 23:18:37,370:INFO:Missing values handled.
+2024-09-22 23:18:37,371:INFO:Encoding Categorical Variables...
+2024-09-22 23:18:52,018:INFO:Categorical variables encoded.
+2024-09-22 23:18:52,019:INFO:Preprocessing Text Data...
+2024-09-22 23:19:21,610:INFO:Text data preprocessed.
+2024-09-22 23:19:22,023:INFO:Label encoders saved.
+2024-09-22 23:19:22,025:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-22 23:19:50,119:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-22 23:19:50,120:INFO:Parsing 'nutritions' column completed.
+2024-09-22 23:19:50,487:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-22 23:20:20,990:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'reviews', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-22 23:20:20,990:INFO:Parsing 'nutritions' column completed.
+2024-09-22 23:20:21,462:INFO:Vectorizing Ingredients with TF-IDF...
+2024-09-22 23:20:21,462:INFO:Loading TF-IDF Vectorizer from tfidf_vectorizer.pkl...
+2024-09-22 23:20:22,490:INFO:Ingredient vectorization completed.
+2024-09-22 23:20:22,491:INFO:Scaling Nutritional Features...
+2024-09-22 23:20:22,539:INFO:Loading Scaler from scaler.pkl...
+2024-09-22 23:20:22,558:INFO:Nutritional features scaled.
+2024-09-22 23:20:22,561:INFO:Extracting Image Features...
+2024-09-22 23:20:23,906:INFO:Loading image features from core_image_features.npy...
+2024-09-22 23:20:24,018:INFO:Loaded image features from core_image_features.npy. Shape: (45630, 1024)
+2024-09-22 23:20:24,019:INFO:Loading image features from raw_image_features.npy...
+2024-09-22 23:20:24,141:INFO:Loaded image features from raw_image_features.npy. Shape: (49698, 1024)
+2024-09-22 23:20:24,141:INFO:Image feature extraction completed.
+2024-09-22 23:20:24,142:INFO:Building Recommender System using SVD...
+2024-09-22 23:20:26,826:INFO:Training SVD Model...
+2024-09-22 23:20:38,278:INFO:SVD model training completed.
+2024-09-22 23:20:52,591:INFO:SVD Model saved to 'svd_model.pkl'.
+2024-09-22 23:20:52,653:INFO:Evaluating Recommender System with SVD Model...
+2024-09-22 23:20:52,663:ERROR:An error occurred: 'DataFrame' object has no attribute 'raw_ratings'
+Traceback (most recent call last):
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_3160\2541911326.py", line 1011, in main
+    evaluate_recommender_svd(svd_model, None, all_core_interactions)
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_3160\2541911326.py", line 818, in evaluate_recommender_svd
+    trainset, testset = surprise_train_test_split(
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\surprise\model_selection\split.py", line 355, in train_test_split
+    return next(ss.split(data))
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\surprise\model_selection\split.py", line 289, in split
+    self.test_size, self.train_size, len(data.raw_ratings)
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\generic.py", line 6299, in __getattr__
+    return object.__getattribute__(self, name)
+AttributeError: 'DataFrame' object has no attribute 'raw_ratings'
+2024-09-23 13:37:48,627:INFO:1 CPU device(s) found.
+2024-09-23 13:37:48,632:INFO:Loading Core Recipe Data...
+2024-09-23 13:37:50,425:INFO:Core Recipes Shape: (45630, 6)
+2024-09-23 13:37:50,426:INFO:Core Recipes Columns: ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'nutritions']
+2024-09-23 13:37:50,427:INFO:Loading Raw Recipe Data...
+2024-09-23 13:38:05,173:INFO:Raw Recipes Shape: (49698, 9)
+2024-09-23 13:38:05,176:INFO:Raw Recipes Columns: ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'nutritions', 'reviews']
+2024-09-23 13:38:05,178:INFO:Loading Interaction Data...
+2024-09-23 13:38:05,653:INFO:Core Train Shape: (676946, 4)
+2024-09-23 13:38:05,654:INFO:Core Train Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 13:38:05,765:INFO:Core Validation Shape: (133459, 4)
+2024-09-23 13:38:05,766:INFO:Core Validation Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 13:38:05,960:INFO:Core Test Shape: (283440, 4)
+2024-09-23 13:38:05,961:INFO:Core Test Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 13:38:08,308:INFO:Raw Interactions Shape: (3794003, 4)
+2024-09-23 13:38:08,309:INFO:Raw Interactions Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 13:38:08,309:INFO:Handling Missing Values...
+2024-09-23 13:38:08,312:INFO:Using 'recipe_name' as the recipe name column.
+2024-09-23 13:38:08,351:INFO:Using 'recipe_name' as the recipe name column for raw_recipes.
+2024-09-23 13:38:08,658:INFO:Missing values handled.
+2024-09-23 13:38:08,659:INFO:Encoding Categorical Variables...
+2024-09-23 13:38:22,407:INFO:Categorical variables encoded.
+2024-09-23 13:38:22,407:INFO:Preprocessing Text Data...
+2024-09-23 14:00:12,816:INFO:1 Physical GPU(s), 1 Logical GPU(s) detected.
+2024-09-23 14:00:12,818:INFO:name: "/device:CPU:0"
+device_type: "CPU"
+memory_limit: 268435456
+locality {
+}
+incarnation: 15499614266387309955
+xla_global_id: -1
+
+2024-09-23 14:00:12,819:INFO:name: "/device:GPU:0"
+device_type: "GPU"
+memory_limit: 2351693824
+locality {
+  bus_id: 1
+  links {
+  }
+}
+incarnation: 967312677699126067
+physical_device_desc: "device: 0, name: NVIDIA GeForce GTX 1650 Ti, pci bus id: 0000:01:00.0, compute capability: 7.5"
+xla_global_id: 416903419
+
+2024-09-23 14:00:12,873:INFO:Loading Core Recipe Data...
+2024-09-23 14:00:14,796:INFO:Core Recipes Shape: (45630, 6)
+2024-09-23 14:00:14,796:INFO:Core Recipes Columns: ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'nutritions']
+2024-09-23 14:00:14,797:INFO:Loading Raw Recipe Data...
+2024-09-23 14:00:30,917:INFO:Raw Recipes Shape: (49698, 9)
+2024-09-23 14:00:30,918:INFO:Raw Recipes Columns: ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'nutritions', 'reviews']
+2024-09-23 14:00:30,919:INFO:Loading Interaction Data...
+2024-09-23 14:00:31,521:INFO:Core Train Shape: (676946, 4)
+2024-09-23 14:00:31,522:INFO:Core Train Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:00:31,663:INFO:Core Validation Shape: (133459, 4)
+2024-09-23 14:00:31,664:INFO:Core Validation Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:00:31,898:INFO:Core Test Shape: (283440, 4)
+2024-09-23 14:00:31,899:INFO:Core Test Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:00:34,916:INFO:Raw Interactions Shape: (3794003, 4)
+2024-09-23 14:00:34,916:INFO:Raw Interactions Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:00:34,917:INFO:Handling Missing Values...
+2024-09-23 14:00:34,918:INFO:Using 'recipe_name' as the recipe name column.
+2024-09-23 14:00:34,932:INFO:Using 'recipe_name' as the recipe name column for raw_recipes.
+2024-09-23 14:00:35,298:INFO:Missing values handled.
+2024-09-23 14:00:35,299:INFO:Encoding Categorical Variables...
+2024-09-23 14:00:50,478:INFO:Categorical variables encoded.
+2024-09-23 14:00:50,479:INFO:Preprocessing Text Data...
+2024-09-23 14:01:21,966:INFO:Text data preprocessed.
+2024-09-23 14:01:22,410:INFO:Label encoders saved.
+2024-09-23 14:01:22,413:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-23 14:01:44,452:ERROR:An error occurred: name 'nutrition_info' is not defined
+Traceback (most recent call last):
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_7496\1950919246.py", line 1077, in main
+    ) = preprocess_data(core_recipes, raw_recipes, core_train, core_valid, core_test, raw_interactions)
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_7496\1950919246.py", line 506, in preprocess_data
+    core_recipes = parse_nutritions_nested(core_recipes)
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_7496\1950919246.py", line 233, in parse_nutritions_nested
+    nutritions_df = nutritions_expanded.apply(extract_nutrients)
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\series.py", line 4917, in apply
+    return SeriesApply(
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\apply.py", line 1427, in apply
+    return self.apply_standard()
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\apply.py", line 1507, in apply_standard
+    mapped = obj._map_values(
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\base.py", line 921, in _map_values
+    return algorithms.map_array(arr, mapper, na_action=na_action, convert=convert)
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\algorithms.py", line 1743, in map_array
+    return lib.map_infer(values, mapper, convert=convert)
+  File "lib.pyx", line 2972, in pandas._libs.lib.map_infer
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_7496\1950919246.py", line 221, in extract_nutrients
+    if isinstance(nutrition_info, dict):
+NameError: name 'nutrition_info' is not defined
+2024-09-23 14:07:56,837:INFO:1 CPU device(s) found.
+2024-09-23 14:07:56,846:INFO:Loading Core Recipe Data...
+2024-09-23 14:07:58,830:INFO:Core Recipes Shape: (45630, 6)
+2024-09-23 14:07:58,832:INFO:Core Recipes Columns: ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'nutritions']
+2024-09-23 14:07:58,833:INFO:Loading Raw Recipe Data...
+2024-09-23 14:08:14,474:INFO:Raw Recipes Shape: (49698, 9)
+2024-09-23 14:08:14,475:INFO:Raw Recipes Columns: ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'nutritions', 'reviews']
+2024-09-23 14:08:14,476:INFO:Loading Interaction Data...
+2024-09-23 14:08:14,993:INFO:Core Train Shape: (676946, 4)
+2024-09-23 14:08:14,994:INFO:Core Train Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:08:15,092:INFO:Core Validation Shape: (133459, 4)
+2024-09-23 14:08:15,093:INFO:Core Validation Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:08:15,308:INFO:Core Test Shape: (283440, 4)
+2024-09-23 14:08:15,309:INFO:Core Test Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:08:17,792:INFO:Raw Interactions Shape: (3794003, 4)
+2024-09-23 14:08:17,793:INFO:Raw Interactions Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:08:17,794:INFO:Handling Missing Values...
+2024-09-23 14:08:17,795:INFO:Using 'recipe_name' as the recipe name column.
+2024-09-23 14:08:17,808:INFO:Using 'recipe_name' as the recipe name column for raw_recipes.
+2024-09-23 14:08:18,118:INFO:Missing values handled.
+2024-09-23 14:08:18,119:INFO:Encoding Categorical Variables...
+2024-09-23 14:08:33,269:INFO:Categorical variables encoded.
+2024-09-23 14:08:33,270:INFO:Preprocessing Text Data...
+2024-09-23 14:09:03,921:INFO:Text data preprocessed.
+2024-09-23 14:09:04,410:INFO:Label encoders saved.
+2024-09-23 14:09:04,413:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-23 14:09:33,905:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-23 14:09:33,906:INFO:Parsing 'nutritions' column completed.
+2024-09-23 14:09:34,227:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-23 14:10:05,165:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'reviews', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-23 14:10:05,166:INFO:Parsing 'nutritions' column completed.
+2024-09-23 14:10:05,565:INFO:Vectorizing Ingredients with TF-IDF...
+2024-09-23 14:10:05,566:INFO:Loading TF-IDF Vectorizer from tfidf_vectorizer.pkl...
+2024-09-23 14:10:06,548:INFO:Ingredient vectorization completed.
+2024-09-23 14:10:06,549:INFO:Scaling Nutritional Features...
+2024-09-23 14:10:06,571:INFO:Loading Scaler from scaler.pkl...
+2024-09-23 14:10:06,609:INFO:Nutritional features scaled.
+2024-09-23 14:10:06,610:INFO:Extracting Image Features...
+2024-09-23 14:10:08,066:INFO:Loading image features from core_image_features.npy...
+2024-09-23 14:10:08,292:INFO:Loading image features from raw_image_features.npy...
+2024-09-23 14:10:08,545:INFO:Image feature extraction completed.
+2024-09-23 14:10:08,547:INFO:Building Recommender System using SVD...
+2024-09-23 14:10:10,200:INFO:Training SVD Model...
+2024-09-23 14:10:21,455:INFO:SVD model training completed.
+2024-09-23 14:10:36,029:INFO:SVD model saved to svd_model.pkl.
+2024-09-23 14:10:36,064:INFO:Evaluating Recommender System with SVD Model...
+2024-09-23 14:10:36,073:ERROR:An error occurred: 'DataFrame' object has no attribute 'raw_ratings'
+Traceback (most recent call last):
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_836\1283994147.py", line 1004, in main
+    evaluate_recommender_svd(svd_model, None, all_core_interactions)
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_836\1283994147.py", line 841, in evaluate_recommender_svd
+    trainset, testset = surprise_train_test_split(all_core_interactions[['user_id_encoded', 'recipe_id_encoded', 'rating']], test_size=0.2, random_state=42)
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\surprise\model_selection\split.py", line 355, in train_test_split
+    return next(ss.split(data))
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\surprise\model_selection\split.py", line 289, in split
+    self.test_size, self.train_size, len(data.raw_ratings)
+  File "c:\Users\mbpd1\AppData\Local\Programs\Python\Python39\lib\site-packages\pandas\core\generic.py", line 6299, in __getattr__
+    return object.__getattribute__(self, name)
+AttributeError: 'DataFrame' object has no attribute 'raw_ratings'
+2024-09-23 14:12:57,445:INFO:Loading Core Recipe Data...
+2024-09-23 14:12:59,319:INFO:Core Recipes Shape: (45630, 6)
+2024-09-23 14:12:59,320:INFO:Core Recipes Columns: ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'nutritions']
+2024-09-23 14:12:59,321:INFO:Loading Raw Recipe Data...
+2024-09-23 14:13:15,382:INFO:Raw Recipes Shape: (49698, 9)
+2024-09-23 14:13:15,383:INFO:Raw Recipes Columns: ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'nutritions', 'reviews']
+2024-09-23 14:13:15,384:INFO:Loading Interaction Data...
+2024-09-23 14:13:15,845:INFO:Core Train Shape: (676946, 4)
+2024-09-23 14:13:15,845:INFO:Core Train Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:13:15,950:INFO:Core Validation Shape: (133459, 4)
+2024-09-23 14:13:15,951:INFO:Core Validation Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:13:16,202:INFO:Core Test Shape: (283440, 4)
+2024-09-23 14:13:16,203:INFO:Core Test Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:13:18,790:INFO:Raw Interactions Shape: (3794003, 4)
+2024-09-23 14:13:18,790:INFO:Raw Interactions Columns: ['user_id', 'recipe_id', 'rating', 'dateLastModified']
+2024-09-23 14:13:18,791:INFO:Handling Missing Values...
+2024-09-23 14:13:18,793:INFO:Using 'recipe_name' as the recipe name column.
+2024-09-23 14:13:18,806:INFO:Using 'recipe_name' as the recipe name column for raw_recipes.
+2024-09-23 14:13:19,119:INFO:Missing values handled.
+2024-09-23 14:13:19,120:INFO:Encoding Categorical Variables...
+2024-09-23 14:13:34,250:INFO:Categorical variables encoded.
+2024-09-23 14:13:34,250:INFO:Preprocessing Text Data...
+2024-09-23 14:14:04,391:INFO:Text data preprocessed.
+2024-09-23 14:14:04,938:INFO:Label encoders saved.
+2024-09-23 14:14:04,940:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-23 14:14:35,144:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-23 14:14:35,146:INFO:Parsing 'nutritions' column completed.
+2024-09-23 14:14:35,518:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-23 14:15:07,986:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'reviews', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-23 14:15:07,988:INFO:Parsing 'nutritions' column completed.
+2024-09-23 14:15:08,559:INFO:Vectorizing Ingredients with TF-IDF...
+2024-09-23 14:15:08,560:INFO:Loading TF-IDF Vectorizer from tfidf_vectorizer.pkl...
+2024-09-23 14:15:09,645:INFO:Ingredient vectorization completed.
+2024-09-23 14:15:09,646:INFO:Scaling Nutritional Features...
+2024-09-23 14:15:09,676:INFO:Loading Scaler from scaler.pkl...
+2024-09-23 14:15:09,692:INFO:Nutritional features scaled.
+2024-09-23 14:15:09,693:INFO:Extracting Image Features...
+2024-09-23 14:15:11,084:INFO:Loading image features from core_image_features.npy...
+2024-09-23 14:15:11,208:INFO:Loading image features from raw_image_features.npy...
+2024-09-23 14:15:11,355:INFO:Image feature extraction completed.
+2024-09-23 14:15:11,357:ERROR:An error occurred: name 'build_and_evaluate_svd' is not defined
+Traceback (most recent call last):
+  File "C:\Users\mbpd1\AppData\Local\Temp\ipykernel_836\2165963680.py", line 44, in main
+    svd_model, svd_rmse = build_and_evaluate_svd(core_train, core_valid, core_test)
+NameError: name 'build_and_evaluate_svd' is not defined
+2024-09-23 14:16:12,114:INFO:1 Physical GPU(s), 1 Logical GPU(s) found.
+2024-09-23 14:16:12,118:INFO:Loading Core Recipe Data...
+2024-09-23 14:16:13,939:INFO:Core Recipes Shape: (45630, 6)
+2024-09-23 14:16:13,939:INFO:Loading Raw Recipe Data...
+2024-09-23 14:16:29,214:INFO:Raw Recipes Shape: (49698, 9)
+2024-09-23 14:16:29,215:INFO:Loading Interaction Data...
+2024-09-23 14:16:32,848:INFO:Handling Missing Values...
+2024-09-23 14:16:33,177:INFO:Missing values handled.
+2024-09-23 14:16:33,178:INFO:Encoding Categorical Variables...
+2024-09-23 14:16:48,255:INFO:Categorical variables encoded.
+2024-09-23 14:16:48,256:INFO:Preprocessing Text Data...
+2024-09-23 14:17:19,088:INFO:Text data preprocessed.
+2024-09-23 14:17:19,536:INFO:Label encoders saved.
+2024-09-23 14:17:19,537:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-23 14:17:49,656:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-23 14:17:49,657:INFO:Parsing 'nutritions' column completed.
+2024-09-23 14:17:49,975:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-23 14:18:21,398:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'reviews', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-23 14:18:21,399:INFO:Parsing 'nutritions' column completed.
+2024-09-23 14:18:21,767:INFO:Vectorizing Ingredients with TF-IDF...
+2024-09-23 14:18:21,768:INFO:Loading TF-IDF Vectorizer from tfidf_vectorizer.pkl...
+2024-09-23 14:18:22,717:INFO:Ingredient vectorization completed.
+2024-09-23 14:18:22,718:INFO:Scaling Nutritional Features...
+2024-09-23 14:18:22,762:INFO:Loading Scaler from scaler.pkl...
+2024-09-23 14:18:22,779:INFO:Nutritional features scaled.
+2024-09-23 14:18:22,781:INFO:Extracting Image Features...
+2024-09-23 14:18:24,266:INFO:Using MirroredStrategy with devices ('/job:localhost/replica:0/task:0/device:GPU:0',)
+2024-09-23 14:18:24,725:INFO:Loading image features from core_image_features.npy...
+2024-09-23 14:18:24,837:INFO:Loading image features from raw_image_features.npy...
+2024-09-23 14:18:24,965:INFO:Image feature extraction completed.
+2024-09-23 14:18:24,967:INFO:Building and Evaluating SVD Recommender System...
+2024-09-23 14:18:27,743:INFO:Training SVD Model...
+2024-09-23 14:18:39,451:INFO:SVD model training completed.
+2024-09-23 14:18:54,001:INFO:SVD Model saved to 'svd_model.pkl'.
+2024-09-23 14:18:54,003:INFO:SVD Recommender System RMSE: 0.796
+2024-09-23 14:18:54,156:INFO:SVD Recommender System RMSE: 0.796
+2024-09-23 14:18:54,157:INFO:Defining Healthiness Metric...
+2024-09-23 14:18:54,159:INFO:Preparing Features and Target...
+2024-09-23 14:18:54,170:INFO:Training Samples: 27378, Validation Samples: 9126, Testing Samples: 9126
+2024-09-23 14:18:54,171:INFO:Building Keras Model...
+2024-09-23 14:18:54,176:INFO:Using MirroredStrategy with devices ('/job:localhost/replica:0/task:0/device:GPU:0',)
+2024-09-23 14:18:54,267:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 14:18:54,271:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 14:18:54,276:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 14:18:54,278:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 14:18:54,285:INFO:Training Keras Model with Early Stopping...
+2024-09-23 14:18:54,292:INFO:Computed class weights: {0: 2.9337762537505356, 1: 0.6027210285311729}
+2024-09-23 14:18:54,788:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 14:18:54,793:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 14:18:54,797:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 14:18:54,803:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 14:18:54,807:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 14:18:56,031:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 14:19:17,288:INFO:Model Training Completed.
+2024-09-23 14:19:17,289:INFO:Evaluating Model on Test Set...
+2024-09-23 14:19:18,721:INFO:Test Accuracy: 0.9958
+2024-09-23 14:19:19,846:INFO:Classification Report:
+2024-09-23 14:19:19,846:INFO:              precision    recall  f1-score   support
+
+           0       0.98      1.00      0.99      1530
+           1       1.00      1.00      1.00      7596
+
+    accuracy                           1.00      9126
+   macro avg       0.99      1.00      0.99      9126
+weighted avg       1.00      1.00      1.00      9126
+
+2024-09-23 14:19:19,850:INFO:ROC AUC Score: 0.9999
+2024-09-23 14:19:20,087:INFO:Confusion matrix plot saved as 'healthiness_confusion_matrix.png'.
+2024-09-23 14:19:20,209:INFO:ROC curve plot saved as 'healthiness_roc_curve.png'.
+2024-09-23 14:19:20,211:INFO:Plotting Training History...
+2024-09-23 14:19:20,815:INFO:Training history plot saved as 'training_history.png'.
+2024-09-23 14:19:20,815:INFO:Saving Keras Model...
+2024-09-23 14:19:20,856:INFO:Healthiness prediction model saved to healthiness_model.h5.
+2024-09-23 14:19:20,857:INFO:All tasks completed successfully.
+2024-09-23 23:20:55,897:INFO:1 Physical GPU(s), 1 Logical GPU(s) found.
+2024-09-23 23:20:55,903:INFO:Loading Core Recipe Data...
+2024-09-23 23:20:57,883:INFO:Core Recipes Shape: (45630, 6)
+2024-09-23 23:20:57,884:INFO:Loading Raw Recipe Data...
+2024-09-23 23:21:13,537:INFO:Raw Recipes Shape: (49698, 9)
+2024-09-23 23:21:13,538:INFO:Loading Interaction Data...
+2024-09-23 23:21:17,936:INFO:Handling Missing Values...
+2024-09-23 23:21:18,450:INFO:Missing values handled.
+2024-09-23 23:21:18,451:INFO:Encoding Categorical Variables...
+2024-09-23 23:22:09,594:INFO:1 Physical GPU(s), 1 Logical GPU(s) found.
+2024-09-23 23:22:09,597:INFO:Loading Core Recipe Data...
+2024-09-23 23:22:11,526:INFO:Core Recipes Shape: (45630, 6)
+2024-09-23 23:22:11,527:INFO:Loading Raw Recipe Data...
+2024-09-23 23:22:28,162:INFO:Raw Recipes Shape: (49698, 9)
+2024-09-23 23:22:28,163:INFO:Loading Interaction Data...
+2024-09-23 23:22:31,798:INFO:Handling Missing Values...
+2024-09-23 23:22:32,169:INFO:Missing values handled.
+2024-09-23 23:22:32,170:INFO:Encoding Categorical Variables...
+2024-09-23 23:22:49,423:INFO:Categorical variables encoded.
+2024-09-23 23:22:49,423:INFO:Preprocessing Text Data...
+2024-09-23 23:23:28,861:INFO:Text data preprocessed.
+2024-09-23 23:23:29,567:INFO:Label encoders saved.
+2024-09-23 23:23:29,569:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-23 23:24:10,099:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-23 23:24:10,100:INFO:Parsing 'nutritions' column completed.
+2024-09-23 23:24:10,452:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-23 23:24:44,995:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'reviews', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-23 23:24:44,996:INFO:Parsing 'nutritions' column completed.
+2024-09-23 23:24:45,509:INFO:Vectorizing Ingredients with TF-IDF...
+2024-09-23 23:24:45,510:INFO:Loading TF-IDF Vectorizer from tfidf_vectorizer.pkl...
+2024-09-23 23:24:46,532:INFO:Ingredient vectorization completed.
+2024-09-23 23:24:46,533:INFO:Scaling Nutritional Features...
+2024-09-23 23:24:46,562:INFO:Loading Scaler from scaler.pkl...
+2024-09-23 23:24:46,590:INFO:Nutritional features scaled.
+2024-09-23 23:24:46,592:INFO:Extracting Image Features...
+2024-09-23 23:24:48,290:INFO:Using MirroredStrategy with devices ('/job:localhost/replica:0/task:0/device:GPU:0',)
+2024-09-23 23:24:48,782:INFO:Loading image features from core_image_features.npy...
+2024-09-23 23:24:49,055:INFO:Loading image features from raw_image_features.npy...
+2024-09-23 23:24:49,354:INFO:Image feature extraction completed.
+2024-09-23 23:24:49,355:INFO:Building and Evaluating SVD Recommender System...
+2024-09-23 23:24:52,837:INFO:Training SVD Model...
+2024-09-23 23:25:08,312:INFO:SVD model training completed.
+2024-09-23 23:25:24,595:INFO:SVD Model saved to 'svd_model.pkl'.
+2024-09-23 23:25:24,597:INFO:SVD Recommender System RMSE: 0.796
+2024-09-23 23:25:24,760:INFO:SVD Recommender System RMSE: 0.796
+2024-09-23 23:25:24,760:INFO:Building and Evaluating LightFM Recommender System...
+2024-09-23 23:29:46,591:INFO:1 Physical GPU(s), 1 Logical GPU(s) found.
+2024-09-23 23:29:46,594:INFO:Loading Core Recipe Data...
+2024-09-23 23:29:48,734:INFO:Core Recipes Shape: (45630, 6)
+2024-09-23 23:29:48,735:INFO:Loading Raw Recipe Data...
+2024-09-23 23:30:09,176:INFO:Raw Recipes Shape: (49698, 9)
+2024-09-23 23:30:09,177:INFO:Loading Interaction Data...
+2024-09-23 23:30:14,067:INFO:Handling Missing Values...
+2024-09-23 23:30:14,533:INFO:Missing values handled.
+2024-09-23 23:30:14,534:INFO:Encoding Categorical Variables...
+2024-09-23 23:30:31,828:INFO:Categorical variables encoded.
+2024-09-23 23:30:31,829:INFO:Preprocessing Text Data...
+2024-09-23 23:31:05,531:INFO:Text data preprocessed.
+2024-09-23 23:31:06,046:INFO:Label encoders saved.
+2024-09-23 23:31:06,047:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-23 23:31:40,684:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'image_url', 'ingredients', 'cooking_directions', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-23 23:31:40,685:INFO:Parsing 'nutritions' column completed.
+2024-09-23 23:31:41,140:INFO:Parsing 'nutritions' column with nested dictionary structure...
+2024-09-23 23:32:17,842:INFO:Columns after parsing 'nutritions': ['recipe_id', 'recipe_name', 'aver_rate', 'image_url', 'review_nums', 'ingredients', 'cooking_directions', 'reviews', 'recipe_id_encoded', 'ingredients_clean', 'calories', 'protein', 'fat', 'carbohydrates', 'fiber']
+2024-09-23 23:32:17,843:INFO:Parsing 'nutritions' column completed.
+2024-09-23 23:32:18,283:INFO:Vectorizing Ingredients with TF-IDF...
+2024-09-23 23:32:18,284:INFO:Loading TF-IDF Vectorizer from tfidf_vectorizer.pkl...
+2024-09-23 23:32:19,402:INFO:Ingredient vectorization completed.
+2024-09-23 23:32:19,403:INFO:Scaling Nutritional Features...
+2024-09-23 23:32:19,439:INFO:Loading Scaler from scaler.pkl...
+2024-09-23 23:32:19,453:INFO:Nutritional features scaled.
+2024-09-23 23:32:19,456:INFO:Extracting Image Features...
+2024-09-23 23:32:21,027:INFO:Using MirroredStrategy with devices ('/job:localhost/replica:0/task:0/device:GPU:0',)
+2024-09-23 23:32:21,574:INFO:Loading image features from core_image_features.npy...
+2024-09-23 23:32:21,708:INFO:Loading image features from raw_image_features.npy...
+2024-09-23 23:32:21,852:INFO:Image feature extraction completed.
+2024-09-23 23:32:21,853:INFO:Building and Evaluating SVD Recommender System...
+2024-09-23 23:32:25,383:INFO:Training SVD Model...
+2024-09-23 23:32:39,875:INFO:SVD model training completed.
+2024-09-23 23:32:58,770:INFO:SVD Model saved to 'svd_model.pkl'.
+2024-09-23 23:32:58,771:INFO:SVD Recommender System RMSE: 0.796
+2024-09-23 23:32:59,091:INFO:SVD Recommender System RMSE: 0.796
+2024-09-23 23:32:59,092:INFO:Defining Healthiness Metric...
+2024-09-23 23:32:59,095:INFO:Preparing Features and Target...
+2024-09-23 23:32:59,109:INFO:Training Samples: 27378, Validation Samples: 9126, Testing Samples: 9126
+2024-09-23 23:32:59,110:INFO:Building Keras Model...
+2024-09-23 23:32:59,112:INFO:Using MirroredStrategy with devices ('/job:localhost/replica:0/task:0/device:GPU:0',)
+2024-09-23 23:32:59,327:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 23:32:59,335:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 23:32:59,344:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 23:32:59,349:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 23:32:59,358:INFO:Training Keras Model with Early Stopping...
+2024-09-23 23:32:59,370:INFO:Computed class weights: {0: 2.9337762537505356, 1: 0.6027210285311729}
+2024-09-23 23:33:00,263:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 23:33:00,271:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 23:33:00,278:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 23:33:00,300:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 23:33:00,310:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 23:33:01,639:INFO:Reduce to /job:localhost/replica:0/task:0/device:CPU:0 then broadcast to ('/job:localhost/replica:0/task:0/device:CPU:0',).
+2024-09-23 23:33:52,860:INFO:Model Training Completed.
+2024-09-23 23:33:52,860:INFO:Evaluating Model on Test Set...
+2024-09-23 23:33:54,893:INFO:Test Accuracy: 0.9977
+2024-09-23 23:33:57,442:INFO:Classification Report:
+2024-09-23 23:33:57,442:INFO:              precision    recall  f1-score   support
+
+           0       0.99      1.00      0.99      1530
+           1       1.00      1.00      1.00      7596
+
+    accuracy                           1.00      9126
+   macro avg       0.99      1.00      1.00      9126
+weighted avg       1.00      1.00      1.00      9126
+
+2024-09-23 23:33:57,446:INFO:ROC AUC Score: 1.0000
+2024-09-23 23:33:57,729:INFO:Confusion matrix plot saved as 'healthiness_confusion_matrix.png'.
+2024-09-23 23:33:57,904:INFO:ROC curve plot saved as 'healthiness_roc_curve.png'.
+2024-09-23 23:33:57,905:INFO:Plotting Training History...
+2024-09-23 23:33:58,251:INFO:Training history plot saved as 'training_history.png'.
+2024-09-23 23:33:58,252:INFO:Saving Keras Model...
+2024-09-23 23:33:58,306:INFO:Healthiness prediction model saved to healthiness_model.h5.
+2024-09-23 23:33:58,307:INFO:All tasks completed successfully.

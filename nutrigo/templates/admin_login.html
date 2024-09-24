@@ -1,0 +1,25 @@
+<!-- templates/admin_login.html -->
+{% extends "base.html" %}
+
+{% block title %}Admin Login - Recipe Recommendation System{% endblock %}
+
+{% block content %}
+    <h1>Admin Login</h1>
+    <form method="post">
+        <label for="username">Username:</label><br>
+        <input type="text" name="username" id="username" required><br><br>
+        <label for="password">Password:</label><br>
+        <input type="password" name="password" id="password" required><br><br>
+        <input type="submit" value="Login">
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+{% endblock %}

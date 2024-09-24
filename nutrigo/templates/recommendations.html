@@ -1,0 +1,27 @@
+<!-- templates/recommendations.html -->
+{% extends "base.html" %}
+
+{% block title %}Recommendations - Recipe Recommendation System{% endblock %}
+
+{% block content %}
+    <h1>Your Recommendations</h1>
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% else %}
+        <ul>
+            {% for rec in recommendations %}
+                <li>
+                    <a href="{{ url_for('recipe_detail', recipe_id=rec.recipe_id) }}">
+                        {% if rec.image_url %}
+                            <img src="{{ rec.image_url }}" alt="{{ rec.recipe_name }}" width="200">
+                        {% endif %}
+                        <h2>{{ rec.recipe_name }}</h2>
+                    </a>
+                    <p>Calories: {{ rec.calories }}</p>
+                    <p>Protein: {{ rec.protein }}</p>
+                    <p>Estimated Rating: {{ rec.est_rating }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

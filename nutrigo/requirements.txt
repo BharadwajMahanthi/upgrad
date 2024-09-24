@@ -1,0 +1,10 @@
+Flask
+numpy
+pandas
+scikit-learn
+tensorflow==2.10.1
+nltk
+joblib==1.0.1
+seaborn
+matplotlib
+flask_sqlalchemy
