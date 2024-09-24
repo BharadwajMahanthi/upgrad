@@ -10,6 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from surprise import SVD, Dataset, Reader
 import os
 from datetime import datetime
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a secure key
@@ -21,6 +22,7 @@ logging.basicConfig(level=logging.INFO)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///nutrigo.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # Global variables for the model and label encoders
 svd_model = None
