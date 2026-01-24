@@ -3,50 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediction App for Anome Data</title>
+    <title>Anomaly Detection System</title>
     <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #e74c3c;
+            --secondary: #34495e;
+            --light: #ecf0f1;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-color: var(--light);
+            color: #333;
+            line-height: 1.6;
         }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        .header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1.5rem;
             text-align: center;
         }
-        input[type="text"], input[type="submit"] {
+        .header h1 { margin: 0; }
+        .header p { margin-top: 5px; opacity: 0.8; }
+        
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        textarea {
+            width: 100%;
+            height: 120px;
             padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
         }
-        input[type="submit"] {
-            background-color: #4CAF50;
+        
+        button {
+            background-color: var(--primary);
             color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
             cursor: pointer;
+            transition: background 0.3s;
         }
-        input[type="submit"]:hover {
-            background-color: #45a049;
+        
+        button:hover {
+            background-color: var(--secondary);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 4px;
+            /* Hide by default, show if prediction exists */
+            display: {% if prediction_text %}block{% else %}none{% endif %};
+        }
+        
+        .result.normal {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+        
+        .result.anomaly {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .info-box {
+            background-color: #e2e3e5;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Prediction App for Anome Data</h2>
-        <p>Enter the feature values as a comma-separated list:</p>
-        <form action="/predict" method="POST">
-            <input type="text" name="data" placeholder="e.g. 0.5, 1.2, 3.4, ..." required>
-            <input type="submit" value="Predict">
-        </form>
-        <h3>{{ prediction_text }}</h3>
+
+    <div class="header">
+        <h1>🔍 Anomaly Detection System</h1>
+        <p>Production Grade Inference API</p>
     </div>
+
+    <div class="container">
+        
+        <div class="info-box">
+            <strong>Instructions:</strong> Check the system logs or documentation for the exact features required.
+            {% if expected_features %}
+            Currently expecting <strong>{{ expected_features }}</strong> numeric values separated by commas.
+            {% else %}
+            Please enter comma-separated numeric features.
+            {% endif %}
+            <br>
+            Current Decision Threshold: <strong>{{ threshold if threshold else '0.5' }}</strong>
+        </div>
+
+        <form action="/predict" method="POST">
+            <div class="form-group">
+                <label for="data">Input Feature Vector:</label>
+                <textarea 
+                    name="data" 
+                    id="data" 
+                    placeholder="Example: 0.05, 1.2, -3.4, 0.0, ... (Enter all required features)"
+                    required></textarea>
+            </div>
+            <button type="submit">Analyze Data</button>
+        </form>
+
+        {% if prediction_text %}
+        <div class="result {% if 'Anomaly' in prediction_text %}anomaly{% else %}normal{% endif %}">
+            <h3>Diagnostic Result:</h3>
+            <p>{{ prediction_text }}</p>
+        </div>
+        {% endif %}
+
+    </div>
+
 </body>
 </html>

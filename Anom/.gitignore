@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+ENV/
+env/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data & Models (Large Files)
+*.pkl
+*.h5
+*.hdf5
+*.csv
+*.xlsx
+*.xls
+*.parquet
+
+# Except sample/test data if needed
+!data/sample/*.csv
+
+# Visualization Outputs
+src/visualization/*.png
+src/visualization/*.pdf
+reports/*.png
+reports/*.pdf
+models/*.pdf
+models/*.txt
+
+# Logs
+*.log
+logs/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Project Specific
+random_forest_model.pkl
+best_random_forest_model.pkl

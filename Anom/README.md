@@ -1,141 +1,120 @@
-# Predictive Maintenance - Machine Breakdown Prediction
+# Predictive Maintenance & Anomaly Detection Pipeline
 
-This project focuses on predicting machine breakdown by identifying anomalies within operational data. The dataset provided contains binary labels (`1` for anomaly and `0` for normal) alongside numerous predictive features. Predictive maintenance is critical for preventing system failures, and this project builds a machine learning model to assist with this task.
+This project implements a **production-grade machine learning pipeline** for detecting machine anomalies. It leverages modern gradient boosting techniques, automated threshold optimization, and a robust data processing engine to identify rare failure events with high precision.
 
-## Project Overview
+---
 
-Predictive maintenance solutions are essential for reducing downtime and preventing unexpected machine failures. This project leverages machine learning to identify potential breakdowns by detecting anomalies in the operational data. The primary components of the project are:
+## 🏆 Key Achievements
 
-1. **Data Preprocessing**: Handles missing values, outliers, and scales features to prepare the dataset for model training.
-2. **Feature Engineering**: Includes interaction terms, polynomial features, and log transformations to enhance model performance.
-3. **Exploratory Data Analysis (EDA)**: Investigates the dataset to identify important features, handle missing values, and assess correlations.
-4. **Model Training**: Trains a Random Forest Classifier using hyperparameter tuning (RandomizedSearchCV) to optimize model accuracy and performance.
-5. **Model Evaluation**: Evaluates the model using accuracy, F1-score, precision, recall, ROC curve, and confusion matrix metrics.
-6. **Model Deployment**: Develops a Flask API to serve predictions using the trained model.
+- **Accuracy**: **99.76%**
+- **F1-Score**: **0.8169** (Optimized from 0.76 baseline)
+- **Precision**: **92.31%** (Extremely low false alarm rate)
+- **Recall**: **64.86%** (Reliably catches critical anomalies)
+- **Model**: `HistGradientBoostingClassifier` (Auto-selected over Random Forest & Logistic Regression via 5-Fold Stratified CV)
 
-## Repository Structure
+---
+
+## 🚀 Features
+
+1.  **Robust Data Pipeline**
+    - Automatic cleaning (whitespace stripping, dropping leaked labels).
+    - **Safe Feature Engineering**: `CustomFeatureEngineer` handles interactions, polynomials, and log transforms.
+    - **Crash-Proof**: Automatically restores column metadata if raw numpy arrays are passed (e.g., from `SimpleImputer`).
+
+2.  **Optimized Decision Making**
+    - **Threshold Tuning**: System automatically finds the best decision threshold (Sensitivity vs. Precision) instead of using the default 0.5. Current optimal: **0.20**.
+    - **Model Bundling**: The saved artifact (`best_model.pkl`) contains the _entire_ pipeline (preprocessing + model) AND the optimized threshold.
+
+3.  **Deployment Ready**
+    - **Flask API**: Professional REST API with error handling and logging.
+    - **Web Dashboard**: Modern, responsive UI (`src/app/templates/index.html`) for real-time inference.
+    - **Docker Ready**: Clean structure suitable for containerization.
+
+---
+
+## 📂 Repository Structure
 
 ```bash
-├── Anom
-│   ├── data                  # Contains raw and processed datasets
-│   ├── models                # Contains trained models and evaluation results
-│   ├── notebooks             # Jupyter notebooks for experiments and analysis
-│   ├── reports               # Reports and model evaluations
-│   ├── src                   # Source code for data loading, feature engineering, and model training
-│   │   ├── data              # Data loading and preprocessing scripts
-│   │   ├── features          # Feature engineering and transformation scripts
-│   │   ├── models            # Model training and evaluation scripts
-│   │   ├── app
-│   │   ├── visualization
-├── main.ipynb                # Main notebook for running the pipeline
-├── random_forest_model.pkl    # Trained Random Forest model file
-├── README.md                 # Project documentation
-
+Anom/
+├── data/                   # Data storage
+│   ├── raw/                # Original Excel files
+│   └── processed/          # Cleaned intermediate data
+├── models/                 # Artifacts
+│   ├── best_model.pkl      # The PRODUCTION MODEL (Pipeline + Threshold)
+│   └── model_results.csv   # Metric logs
+├── src/                    # Source Code
+│   ├── app/                # Flask Application
+│   │   ├── templates/      # HTML UI
+│   │   └── app.py          # API Server
+│   ├── data/               # Loading & EDA
+│   ├── features/           # Feature Engineering (CustomTransformers)
+│   ├── models/             # Training & Evaluation Logic
+│   └── visualization/      # Generated Plots (Confusion Matrix, ROC, etc.)
+├── main.py                 # Master Training Pipeline Script
+├── test_api_live.py        # Integration Test Script used for verification
+├── requirements.txt        # Python Dependencies
+└── README.md               # This file
 ```
 
-## Project Workflow
+---
 
-### 1. Data Preprocessing
-- **Task**: Handle missing values, detect and remove outliers, and scale numerical features using standard scaling techniques.
-- **Script**: `load_data.py` loads the dataset and performs necessary preprocessing steps to ensure the data is ready for model training.
+## 🛠️ Installation & Usage
 
-### 2. Feature Engineering
-- **Task**: Generate interaction terms, polynomial features, and apply transformations (e.g., log transformations) to boost model accuracy.
-- **Script**: `build_features.py` implements these transformations and enhances the feature set for improved model performance.
+### 1. Setup Environment
 
-### 3. Exploratory Data Analysis (EDA)
-- **Task**: Conduct Univariate and Bivariate analysis, generate correlation heatmaps, and assess feature importance to gain insights into the data.
-- **Script**: `load_data.py` also handles the EDA process and outputs visualizations and summary statistics.
-
-### 4. Model Training
-- **Task**: Train a Random Forest Classifier, and use RandomizedSearchCV for hyperparameter tuning to ensure the best possible performance.
-- **Script**: `train_model.py` splits the data into train and test sets, trains the model, and performs hyperparameter optimization.
-
-### 5. Model Evaluation
-- **Task**: Evaluate the model using a variety of metrics (accuracy, F1-score, recall, precision). Visualizations such as confusion matrices, ROC curves, and feature importance plots are saved for analysis.
-- **Script**: `train_model.py` generates these evaluations and saves them in both image and PDF format for review.
-
-### 6. Model Deployment
-- **Task**: Deploy the trained model using a Flask API, allowing real-time predictions by sending input features through a POST request.
-- **Script**: `app.py` is the Flask-based API for real-time predictions.
-
-## Prerequisites
-
-Before running the project, ensure you have Python 3.9+ and the following libraries installed:
-
-- `pandas`
-- `numpy`
-- `seaborn`
-- `matplotlib`
-- `scikit-learn`
-- `flask`
-- `joblib`
-
-You can install all dependencies with:
+Ensure Python 3.9+ is installed.
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## How to Run the Project
+### 2. Train the Model
 
-### 1. Clone the repository
+Run the end-to-end pipeline. This will load data, perform EDA, engineer features, select the best model, tune the threshold, and save the artifact.
+
 ```bash
-git clone https://github.com/BharadwajMahanthi/upgrad.git
+python main.py
 ```
 
-### 2. Navigate to the project directory
+_Artifacts will be saved to `models/` and `src/visualization/`._
+
+### 3. Run the API Server
+
+Start the Flask application for real-time inference.
+
 ```bash
-cd upgrad/capstone
+python src/app/app.py
 ```
 
-### 3. Data Preprocessing and Feature Engineering
-Run the scripts for loading and preprocessing data:
+Access the dashboard at: **http://127.0.0.1:5000/**
+
+### 4. Test the API
+
+Verify the API is working using the provided test script (simulates Normal vs Anomaly requests).
+
 ```bash
-python src/data/load_data.py
-python src/features/build_features.py
+python test_api_live.py
 ```
-
-### 4. Model Training and Evaluation
-Run the model training script to train and evaluate the Random Forest model:
-```bash
-python src/models/train_model.py
-```
-
-### 5. Deploying the Model
-Start the Flask API for real-time predictions:
-```bash
-python src/app.py
-```
-
-Access the application by visiting `http://127.0.0.1:5000` in your browser.
-
-## Model Performance and Results
-
-- **Best Model**: Random Forest Classifier
-- **Accuracy**: Achieved above 99% accuracy on the test dataset after hyperparameter tuning.
-- **Metrics**: F1-score, recall, precision, ROC curve, and confusion matrix are used to evaluate model performance.
-- **Overfitting**: No significant overfitting detected, based on train-test accuracy comparison.
-
-## Future Work
-
-1. **Model Enhancement**: Experimenting with more complex models (e.g., Gradient Boosting or Neural Networks) to improve performance further.
-2. **Feature Engineering**: Applying additional feature engineering techniques, such as domain-specific transformations or feature selection.
-3. **Model Explainability**: Implementing model explainability tools (e.g., SHAP values) to better understand model predictions.
-4. **Continuous Learning**: Updating the model as more data is collected to ensure it stays relevant and accurate.
-5. **Scaling Deployment**: Scaling the API using Docker or Kubernetes for better production readiness.
-
-## Source Code
-
-The source code for this project is structured in a modular fashion:
-
-- `load_data.py`: Handles data loading, preprocessing, and initial EDA.
-- `build_features.py`: Implements feature engineering.
-- `train_model.py`: Contains the code for training and evaluating the model.
-- `app.py`: Flask-based API for deploying the model and serving predictions.
-
-You can view the source code files in the `src/` directory of the repository.
 
 ---
 
-This documentation provides a detailed overview of the project structure, workflow, and future improvements. You can also add more sections based on additional features or insights gathered during the project.
+## 🔬 Exploratory Data Analysis (EDA)
+
+The pipeline automatically generates insights in `src/visualization/`:
+
+- **Correlation Heatmaps**: To identify redundant features.
+- **Pairplots**: Visualizing relationships between top features.
+- **KDE Plots**: Distribution differences between Normal (0) and Anomaly (1).
+- **PCA Projection**: 2D scatter plot of the feature space.
+
+---
+
+## 🤝 Contribution
+
+This pipeline is built to be modular.
+
+- Modify `src/features/build_features.py` to add new transformations.
+- Adjust `src/models/train_model.py` to add new algorithms to the competition.
+- Update `src/config.py` to change paths or constants.
+
+**Author**: Bharadwaj Mahanthi
