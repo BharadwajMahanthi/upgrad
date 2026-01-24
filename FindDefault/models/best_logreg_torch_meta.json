@@ -1,0 +1,1 @@
+{"lr":0.1,"num_epochs":300,"regularization":"l1","reg_lambda":0.01,"best_threshold":0.3,"best_f1":0.9347983652}

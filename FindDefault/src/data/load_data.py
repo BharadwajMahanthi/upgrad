@@ -1,235 +1,331 @@
+# ============================================================
+# Credit Card Fraud - EDA + Preprocessing (Pyrefly-safe)
+# ============================================================
+# This script:
+# 1) Loads creditcard.csv
+# 2) Runs fast EDA (missing heatmap, univariate plots, sampled pairplot, correlation heatmap)
+# 3) Detects outliers (IQR method) + saves reports and plots
+# 4) Preprocesses data (scales Time + Amount, saves outputs)
+#
+# Added:
+# ✅ Outlier detection summary (IQR)
+# ✅ Outlier boxplots for top outlier columns
+# ✅ Amount + Time outlier plot
+# ============================================================
+
 import pandas as pd
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
-from sklearn.impute import SimpleImputer
-import os
-import cupy as cp  # cuPy for GPU-accelerated array processing
-import torch
+import sys
+from pathlib import Path
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# -----------------------------
+# OPTIONAL GPU SUPPORT
+# -----------------------------
+try:
+    import cupy as cp  # optional
+except Exception:
+    cp = None
+
+try:
+    import torch  # optional
+except Exception:
+    torch = None
+
+
+# -----------------------------
+# Add project root to sys.path
+# -----------------------------
+current_dir = Path(__file__).resolve().parent
+project_root = current_dir.parent.parent
+sys.path.append(str(project_root))
+
+from src import config  # expects RAW_DATA_FILE, CLEANED_DATA_FILE, VISUALIZATION_DIR, PREPROCESSED_DATA_FILE, X_SCALED_FILE, Y_FILE
+
+
+# -----------------------------
+# Device setup (optional, Pyrefly-safe)
+# -----------------------------
+if torch is not None and hasattr(torch, "cuda") and torch.cuda.is_available():
+    device = torch.device("cuda")
+else:
+    device = "cpu"
+
 print(f"Using device: {device}")
 
-# Define paths for saving the plots and results
-output_path = r'C:\Users\mbpd1\downloads\upgrad\capstone\FindDefault\reports'
-vis_path = r"C:\Users\mbpd1\downloads\upgrad\capstone\FindDefault\src\visualization"
-processed_data_path = r"C:\Users\mbpd1\downloads\upgrad\capstone\FindDefault\data\processed"
-os.makedirs(output_path, exist_ok=True)
 
-# Data Overview and Insights
-def data_overview(data):
-    """Display basic data information such as data types, missing values, and statistical summary."""
-    # Convert cuPy array to pandas DataFrame
-    data_df = pd.DataFrame(cp.asnumpy(data))
+# -----------------------------
+# Ensure directories exist
+# -----------------------------
+config.ensure_dirs()
 
+
+# ============================================================
+# BASIC DATA OVERVIEW
+# ============================================================
+def data_overview(df: pd.DataFrame) -> None:
+    """Display dataset shape, dtypes, missing values, and stats."""
     print("\n--- Dataset Overview ---")
-    print("Shape of the dataset:", data_df.shape)
-    
+    print("Shape:", df.shape)
+
     print("\n--- Data Types ---")
-    print(data_df.dtypes)
-    
-    print("\n--- Checking for Missing Values ---")
-    print(data_df.isnull().sum())
-    
+    print(df.dtypes)
+
+    print("\n--- Missing Values (per column) ---")
+    print(df.isnull().sum())
+
     print("\n--- Statistical Summary ---")
-    print(data_df.describe())
+    print(df.describe())
 
-# Univariate analysis for continuous variables
-def univariate_continuous(data, save_path):
-    """Univariate analysis for continuous variables."""
-    # Convert cuPy array back to pandas DataFrame
-    data_df = pd.DataFrame(cp.asnumpy(data))
 
-    # Identify continuous columns (float64, int64)
-    continuous_columns = data_df.select_dtypes(include=['float64', 'int64']).columns
-    
-    for col in continuous_columns:
-        plt.figure(figsize=(10, 5))
-        
-        # Convert cuPy array to numpy for plotting
-        plt.subplot(1, 2, 1)
-        sns.histplot(cp.asnumpy(data[:, col]), kde=True, color='blue')  # Use cuPy for GPU processing
-        plt.title(f'Histogram of {col}')
-
-        plt.subplot(1, 2, 2)
-        sns.boxplot(x=cp.asnumpy(data[:, col]), color='red')  # Use cuPy for GPU processing
-        plt.title(f'Boxplot of {col}')
-        
-        plt.tight_layout()
-        plt.savefig(os.path.join(save_path, f'univariate_{col}.png'))
-        plt.show()
-        plt.close()
-
-# Bivariate analysis (continuous vs continuous)
-def bivariate_continuous(data, save_path):
-    """Bivariate analysis for continuous variables."""
-    # Convert cuPy array back to pandas DataFrame for seaborn pairplot
-    data_df = pd.DataFrame(cp.asnumpy(data))
-
-    continuous_columns = data_df.select_dtypes(include=['float64', 'int64']).columns
-    pairplot_data = data_df[continuous_columns]
-    sns.pairplot(pairplot_data, diag_kind='kde')
-    plt.title('Bivariate Analysis of Continuous Variables (Pairplot)')
-    plt.savefig(os.path.join(save_path, 'bivariate_continuous_pairplot.png'))
-    plt.show()
+# ============================================================
+# PLOT HELPERS
+# ============================================================
+def save_plot(path: Path) -> None:
+    """Save current plot and close figure."""
+    plt.tight_layout()
+    plt.savefig(path, dpi=300)
     plt.close()
 
-# Correlation heatmap for continuous variables
-def correlation_heatmap(data, save_path):
-    """Plot correlation heatmap."""
-    # Calculate correlation matrix on GPU, then convert to numpy for plotting
-    plt.figure(figsize=(14, 10))  # Increase figure size
-    corr = cp.asnumpy(cp.corrcoef(data.T))  # GPU-accelerated correlation matrix
-    sns.heatmap(corr, annot=True, fmt=".2f", cmap='coolwarm', annot_kws={"size": 8}, linewidths=.5)
-    plt.xticks(rotation=45, ha='right', fontsize=10)  # Rotate x-axis labels
-    plt.yticks(fontsize=10)  # Set y-axis label size
-    plt.title('Correlation Heatmap', fontsize=15)
-    plt.tight_layout()  # Adjust layout to avoid clipping
-    plt.savefig(save_path)
-    plt.show()
 
-# Main EDA function
-def perform_eda(filepath):
-    print("Performing EDA on the dataset.")
-    try:
-        # Load data
-        data = pd.read_csv(filepath)
-
-        # Convert to cuPy for GPU processing
-        data_cp = cp.asarray(data)
-
-        # Data Overview
-        data_overview(data_cp)
-
-        # Univariate Analysis
-        print("Performing Univariate Analysis...")
-        #univariate_continuous(data_cp, vis_path)
-
-        # Bivariate Analysis
-        print("Performing Bivariate Analysis...")
-        #bivariate_continuous(data_cp, vis_path)
-
-        # Correlation Heatmap
-        print("Generating Correlation Heatmap...")
-        correlation_heatmap(data_cp, os.path.join(vis_path, 'correlation_heatmap.png'))
-
-        # Identify and save cleaned data for future steps
-        data_cleaned = data.dropna()  # Example for further processing (can be replaced with imputation)
-
-        data_cleaned.to_csv(os.path.join(processed_data_path, 'cleaned_data.csv'), index=False)
-        print(f"Cleaned data saved to {processed_data_path}")
-        
-    except FileNotFoundError as e:
-        print(f"Error loading data: {e}")
-
-def plot_missing_values(data, save_path):
+def plot_missing_values(df: pd.DataFrame, save_path: Path) -> None:
     """Plot and save missing values heatmap."""
-    # Convert cuPy array to pandas DataFrame
-    data_df = pd.DataFrame(cp.asnumpy(data))
-
     plt.figure(figsize=(10, 6))
-    sns.heatmap(data_df.isnull(), cbar=False, cmap='viridis')
-    plt.title('Missing Values Heatmap')
-    plt.savefig(save_path)  # Save plot
-    plt.show()
-    
-def preprocess_data(filepath):
-    """Preprocess data by handling missing values and scaling features on GPU using cuPy and PyTorch."""
-    # Load data
-    data = pd.read_csv(filepath)
-    
-    # Drop any datetime columns (not present in this dataset)
-    datetime_cols = data.select_dtypes(include=['datetime64']).columns
-    if len(datetime_cols) > 0:
-        print(f"Dropping datetime columns: {list(datetime_cols)}")
-        data = data.drop(columns=datetime_cols)
-    
-    # Create directories if they don't exist
-    os.makedirs(vis_path, exist_ok=True)
-    os.makedirs(processed_data_path, exist_ok=True)
-    
-    # Plot and save missing values heatmap
-    plot_missing_values(data, os.path.join(vis_path, 'missing_values_heatmap.png'))
-    
-    # Separate features (X) and target (y)
-    if 'Class' not in data.columns:
-        raise ValueError("Target column 'Class' not found in dataset")
-        
-    X = data.drop('Class', axis=1)  # Assuming the target column is 'Class'
-    y = data['Class']
+    sns.heatmap(df.isnull(), cbar=False, cmap="viridis")
+    plt.title("Missing Values Heatmap")
+    save_plot(save_path)
 
-    # Align X and y **before** processing X
-    X, y = X.align(y, join='inner', axis=0)
 
-    # Ensure y_cleaned is flattened (1-dimensional)
-    y_cleaned = y.values.ravel()
+def univariate_continuous(df: pd.DataFrame, save_dir: Path, max_cols: int = 10) -> None:
+    """
+    Univariate analysis for numeric variables.
+    Limits columns to prevent generating too many plots.
+    """
+    numeric_cols = df.select_dtypes(include=["float64", "int64"]).columns.tolist()
+    numeric_cols = [c for c in numeric_cols if c.lower() not in ["class", "y"]]
+    numeric_cols = numeric_cols[:max_cols]
 
-    # Check class distribution before proceeding
-    print("Class distribution before imputing missing values and scaling:")
-    print(pd.Series(y_cleaned).value_counts())
+    for col in numeric_cols:
+        plt.figure(figsize=(10, 5))
 
-    # Handle missing values in X using cuPy for mean imputation
-    X_cp = cp.asarray(X)
-    means_cp = cp.mean(X_cp, axis=0)  # Calculate the mean for each column
+        plt.subplot(1, 2, 1)
+        sns.histplot(x=df[col], kde=True)
+        plt.title(f"Histogram of {col}")
 
-    # Iterate through columns and replace NaN with the respective column mean
-    for i in range(X_cp.shape[1]):
-        X_cp[:, i] = cp.nan_to_num(X_cp[:, i], nan=means_cp[i])
+        plt.subplot(1, 2, 2)
+        sns.boxplot(x=df[col])
+        plt.title(f"Boxplot of {col}")
 
-    # Now `X_cp` is imputed
-    X_imputed_cp = X_cp
+        save_plot(save_dir / f"univariate_{col}.png")
 
-    # Check class distribution after alignment
-    print("Class distribution after aligning X and y:")
-    print(pd.Series(y_cleaned).value_counts())
-    
-    # Move data to GPU using cuPy and PyTorch tensors
-    X_imputed_tensor = torch.tensor(X_imputed_cp.get(), dtype=torch.float32).to(device)
-    y_cleaned_tensor = torch.tensor(y_cleaned, dtype=torch.float32).to(device)
-    
-    # Scaling numerical features using cuPy StandardScaler
+
+def bivariate_continuous(df: pd.DataFrame, save_dir: Path, sample_size: int = 2000) -> None:
+    """
+    Pairplot is heavy on large datasets. This samples safely.
+    """
+    numeric_cols = df.select_dtypes(include=["float64", "int64"]).columns.tolist()
+    numeric_cols = [c for c in numeric_cols if c.lower() not in ["class", "y"]]
+    numeric_cols = numeric_cols[:6]
+
+    if len(numeric_cols) < 2:
+        print("Not enough numeric features for bivariate analysis.")
+        return
+
+    df_sample = df[numeric_cols].sample(n=min(sample_size, len(df)), random_state=42)
+
+    g = sns.pairplot(df_sample, diag_kind="kde")
+    g.figure.suptitle("Bivariate Analysis (Pairplot - Sampled)", y=1.02)
+    g.savefig(save_dir / "bivariate_continuous_pairplot.png", dpi=300)
+    plt.close("all")
+
+
+def correlation_heatmap(df: pd.DataFrame, save_path: Path) -> None:
+    """
+    Plot correlation heatmap.
+    Uses CPU pandas correlation for stability.
+    """
+    numeric_df = df.select_dtypes(include=["float64", "int64"]).copy()
+
+    plt.figure(figsize=(14, 10))
+    corr = numeric_df.corr()
+
+    sns.heatmap(
+        corr,
+        annot=False,
+        cmap="coolwarm",
+        linewidths=0.3,
+    )
+    plt.title("Correlation Heatmap", fontsize=15)
+    save_plot(save_path)
+
+
+# ============================================================
+# OUTLIER DETECTION (IQR METHOD)
+# ============================================================
+def detect_outliers_iqr(series: pd.Series, iqr_multiplier: float = 1.5) -> pd.Series:
+    """
+    Returns a boolean mask for outliers using the IQR method.
+    Outlier if:
+      x < Q1 - 1.5*IQR OR x > Q3 + 1.5*IQR
+    """
+    q1 = series.quantile(0.25)
+    q3 = series.quantile(0.75)
+    iqr = q3 - q1
+
+    lower = q1 - iqr_multiplier * iqr
+    upper = q3 + iqr_multiplier * iqr
+
+    return (series < lower) | (series > upper)
+
+
+def outlier_summary_report(df: pd.DataFrame, save_dir: Path, top_k: int = 10) -> pd.DataFrame:
+    """
+    Creates an outlier summary report for numeric columns and saves:
+    - outlier_summary.csv
+    - outlier_boxplot_top_features.png
+    - outlier_amount_time.png (special focused plot)
+    """
+    numeric_cols = df.select_dtypes(include=["float64", "int64"]).columns.tolist()
+    numeric_cols = [c for c in numeric_cols if c.lower() not in ["class", "y"]]
+
+    summary_rows = []
+
+    for col in numeric_cols:
+        mask = detect_outliers_iqr(df[col])
+        count_outliers = int(mask.sum())
+        pct = float((count_outliers / len(df)) * 100)
+
+        summary_rows.append(
+            {
+                "feature": col,
+                "outlier_count": count_outliers,
+                "outlier_percent": round(pct, 4),
+            }
+        )
+
+    summary_df = pd.DataFrame(summary_rows).sort_values(
+        "outlier_percent", ascending=False
+    ).reset_index(drop=True)
+
+    # Save outlier summary
+    summary_path = save_dir / "outlier_summary.csv"
+    summary_df.to_csv(summary_path, index=False)
+    print(f"✅ Outlier summary saved to: {summary_path}")
+
+    # Plot boxplots for top K outlier-heavy features
+    top_features = summary_df.head(top_k)["feature"].tolist()
+
+    if len(top_features) > 0:
+        plt.figure(figsize=(14, 6))
+        df[top_features].boxplot(rot=45)
+        plt.title(f"Top {top_k} Features With Most Outliers (IQR)")
+        save_plot(save_dir / "outlier_boxplot_top_features.png")
+        print(f"✅ Outlier boxplot saved to: {save_dir / 'outlier_boxplot_top_features.png'}")
+
+    # Special plot for Amount + Time (very important in this dataset)
+    cols_special = [c for c in ["Amount", "Time"] if c in df.columns]
+    if len(cols_special) > 0:
+        plt.figure(figsize=(10, 5))
+        df[cols_special].boxplot()
+        plt.title("Outlier Boxplot: Time + Amount")
+        save_plot(save_dir / "outlier_amount_time.png")
+        print(f"✅ Amount/Time outlier plot saved to: {save_dir / 'outlier_amount_time.png'}")
+
+    return summary_df
+
+
+# ============================================================
+# MAIN EDA FUNCTION
+# ============================================================
+def perform_eda(filepath: Path) -> None:
+    """Run EDA and save plots + cleaned CSV."""
+    print("Performing EDA on the dataset...")
+
+    df = pd.read_csv(filepath)
+
+    # Clean column names
+    df.columns = df.columns.astype(str).str.strip()
+
+    data_overview(df)
+
+    plot_missing_values(df, config.VISUALIZATION_DIR / "missing_values_heatmap.png")
+
+    print("Performing Univariate Analysis (limited)...")
+    univariate_continuous(df, config.VISUALIZATION_DIR, max_cols=10)
+
+    print("Performing Bivariate Analysis (sampled)...")
+    bivariate_continuous(df, config.VISUALIZATION_DIR, sample_size=2000)
+
+    print("Generating Correlation Heatmap...")
+    correlation_heatmap(df, config.VISUALIZATION_DIR / "correlation_heatmap.png")
+
+    # ✅ Outlier detection + report
+    print("Detecting Outliers (IQR method)...")
+    outlier_summary_report(df, config.VISUALIZATION_DIR, top_k=10)
+
+    # Save cleaned copy
+    df.to_csv(config.CLEANED_DATA_FILE, index=False)
+    print(f"✅ Cleaned data saved to: {config.CLEANED_DATA_FILE}")
+
+
+# ============================================================
+# PREPROCESSING
+# ============================================================
+def preprocess_data(filepath: Path):
+    """
+    Preprocess dataset:
+    - clean columns
+    - split X/y
+    - scale Time + Amount
+    - save X_scaled, y, and full preprocessed dataset
+    """
+    print("\nPreprocessing dataset...")
+
+    df = pd.read_csv(filepath)
+    df.columns = df.columns.astype(str).str.strip()
+
+    if "Class" not in df.columns:
+        raise ValueError("Target column 'Class' not found in dataset.")
+
+    X = df.drop(columns=["Class"])
+    y = df["Class"].astype(int)
+
+    print("\nClass distribution:")
+    print(y.value_counts())
+
     scaler = StandardScaler()
-    X_scaled_np = scaler.fit_transform(X_imputed_tensor.cpu().numpy())  # Scale on CPU, move to GPU if needed
-    X_scaled_tensor = torch.tensor(X_scaled_np, dtype=torch.float32).to(device)
-    
-    # Check for outliers using box plots and save
-    plt.figure(figsize=(12, 6))
-    pd.DataFrame(X_scaled_np, columns=X.columns).boxplot()
-    plt.title('Box Plot for Outlier Detection')
-    plt.xticks(rotation=90)
-    plt.savefig(os.path.join(vis_path, 'outlier_boxplot.png'))  # Save plot
-    plt.show()
-    
-    # Convert back to pandas for saving the data
-    X_scaled = pd.DataFrame(X_scaled_tensor.cpu().numpy(), columns=X.columns)
-    y_cleaned = pd.Series(y_cleaned_tensor.cpu().numpy(), name='Class')
-    
-    # Concatenate X_scaled and y_cleaned into a single DataFrame
-    p = pd.concat([X_scaled, y_cleaned.reset_index(drop=True)], axis=1)
-    
-    # Save preprocessed data with a new filename or overwrite existing file after checking
-    preprocessed_data_file = os.path.join(processed_data_path, 'preprocessed_data.csv')
-    
-    if os.path.exists(preprocessed_data_file):
-        print(f"File '{preprocessed_data_file}' already exists. Overwriting...")
-    
-    p.to_csv(preprocessed_data_file, index=False)
-    print(f"Preprocessed data saved to {preprocessed_data_file}")
-    
-    # Save X_scaled and y_cleaned separately
-    X_scaled.to_csv(os.path.join(processed_data_path, 'X_scaled.csv'), index=False)
-    y_cleaned.to_csv(os.path.join(processed_data_path, 'y.csv'), index=False)
-    
-    return X_scaled, y_cleaned, p
+
+    cols_to_scale = []
+    if "Amount" in X.columns:
+        cols_to_scale.append("Amount")
+    if "Time" in X.columns:
+        cols_to_scale.append("Time")
+
+    if cols_to_scale:
+        X[cols_to_scale] = scaler.fit_transform(X[cols_to_scale])
+
+    # Save outputs
+    X.to_csv(config.X_SCALED_FILE, index=False)
+    y.to_csv(config.Y_FILE, index=False)
+
+    preprocessed_df = pd.concat(
+        [X.reset_index(drop=True), y.reset_index(drop=True)],
+        axis=1
+    )
+    preprocessed_df.to_csv(config.PREPROCESSED_DATA_FILE, index=False)
+
+    print(f"\n✅ X_scaled saved to: {config.X_SCALED_FILE}")
+    print(f"✅ y saved to: {config.Y_FILE}")
+    print(f"✅ full preprocessed dataset saved to: {config.PREPROCESSED_DATA_FILE}")
+
+    return X, y, preprocessed_df
 
 
+# ============================================================
+# RUN
+# ============================================================
 if __name__ == "__main__":
-    # Filepath to dataset
-    data_path = r'C:\Users\mbpd1\downloads\upgrad\capstone\FindDefault\data\raw\creditcard.csv'
-    data_path_cl = r'C:\Users\mbpd1\downloads\upgrad\capstone\FindDefault\data\processed\cleaned_data.csv'
-    
-    # Perform EDA on the raw dataset
-    perform_eda(data_path)
-    
-    # Preprocess the cleaned data
-    X_scaled, y, preprocessed_data = preprocess_data(data_path_cl)
+    perform_eda(config.RAW_DATA_FILE)
+    X_scaled, y, preprocessed_data = preprocess_data(config.CLEANED_DATA_FILE)

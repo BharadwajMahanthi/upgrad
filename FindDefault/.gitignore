@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Data (Exclude raw/processed data if too large, but user might want it committed if small. Standard practice is to ignore data.)
+# For this specific user request, they might want everything, but I'll exclude large intermediates to be safe, or just standard .DS_Store
+# Ignoring model artifacts if they are huge, but here they are reasonable.
+# Let's ignore the virtual env and pycache primarily.
+
+# VS Code
+.vscode/
+
+# Idea
+.idea/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Artifacts/Temp
+*.log

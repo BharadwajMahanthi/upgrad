@@ -3,50 +3,520 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediction App for Anome Data</title>
+    <title>FindDefault | Loan Risk Assessment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            /* Palette: Modern Fintech Blue */
+            --primary: #2563eb;       /* Royal Blue */
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;     /* Slate */
+            --success: #10b981;       /* Emerald */
+            --danger: #ef4444;        /* Red */
+            --background: #f1f5f9;    /* Light Slate Gray */
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            outline: none;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        .navbar {
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* --- Layout --- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- Cards --- */
+        .card {
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .card-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* --- Input Grid --- */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .feature-input {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background-color: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        .feature-input:focus {
+            border-color: var(--primary);
+            background-color: var(--surface);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* --- Actions --- */
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.85rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: background 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            gap: 0.5rem;
         }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f8fafc;
+            color: var(--text-main);
+        }
+
+        /* --- Result Panel --- */
+        .result-panel {
             text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
-        input[type="text"], input[type="submit"] {
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+
+        .status-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
         }
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
+
+        .verdict {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
         }
-        input[type="submit"]:hover {
-            background-color: #45a049;
+
+        .prob-score {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: var(--text-main);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Colors for states */
+        .safe { color: var(--success); }
+        .danger { color: var(--danger); }
+        .bg-safe { background-color: #d1fae5; color: #065f46; }
+        .bg-danger { background-color: #fee2e2; color: #991b1b; }
+
+        /* --- Footer --- */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Helper CSV Paste Area (Hidden by default) */
+        #paste-area {
+            display: none;
+            width: 100%;
+            height: 100px;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Prediction App for Anome Data</h2>
-        <p>Enter the feature values as a comma-separated list:</p>
-        <form action="/predict" method="POST">
-            <input type="text" name="data" placeholder="e.g. 0.5, 1.2, 3.4, ..." required>
-            <input type="submit" value="Predict">
-        </form>
-        <h3>{{ prediction_text }}</h3>
+
+    <nav class="navbar">
+        <div class="brand">
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            FindDefault
+        </div>
+        <div style="font-size: 0.9rem; color: var(--text-muted);">v2.0</div>
+    </nav>
+
+    <div class="main-container">
+        <div class="dashboard-grid">
+            
+            <!-- LEFT: INPUT FORM -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Applicant Data (Simulated)</h2>
+                    <p class="card-subtitle">Use simulation mode to load real historical transaction patterns.</p>
+                </div>
+
+                <!-- Simulation Controls -->
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px dashed var(--border); margin-bottom: 2rem;">
+                    <label class="input-label" style="margin-bottom: 0.5rem; display: block;">STEP 1: LOAD CASE STUDY</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <button type="button" class="btn" style="background-color: var(--danger);" onclick="simulateCase('fraud')">
+                            🔴 Load Fraud Case
+                        </button>
+                        <button type="button" class="btn" style="background-color: var(--success);" onclick="simulateCase('normal')">
+                            🟢 Load Normal Case
+                        </button>
+                    </div>
+                    <div id="simulation-status" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center; min-height: 1.2em;"></div>
+                </div>
+
+                <form id="predictionForm" method="POST" action="/predict">
+                    <!-- Hidden field to send combined string to backend -->
+                    <input type="hidden" name="data" id="combinedData">
+
+                    <label class="input-label">STEP 2: REVIEW FEATURES (PCA)</label>
+                    <div class="feature-grid" id="featureGrid">
+                        <!-- Inputs will be generated by JS -->
+                    </div>
+
+                    <button type="submit" class="btn" onclick="prepareSubmission(event)">
+                        Analyze Risk Profile
+                    </button>
+                </form>
+                
+                <div style="margin-top: 1rem; text-align: center;">
+                    <button type="button" class="btn-secondary" onclick="togglePasteArea()" style="border: none; font-size: 0.8rem;">
+                       Show Manual Paste Area
+                    </button>
+                    <textarea id="paste-area" placeholder="Paste values..." oninput="autoFillInputs()"></textarea>
+                </div>
+            </div>
+
+            <!-- RIGHT: PREDICTION RESULT -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Risk Analysis</h2>
+                    <p class="card-subtitle">AI-driven default probability assessment.</p>
+                </div>
+
+                <div class="result-panel">
+                    {% if prediction_text %}
+                        {% if 'Default' in prediction_text or '1' in prediction_text %}
+                            <div class="status-icon danger">⚠️</div>
+                            <div class="verdict danger">HIGH RISK</div>
+                            <div class="status-badge bg-danger">Declined</div>
+                        {% else %}
+                            <div class="status-icon safe">🛡️</div>
+                            <div class="verdict safe">LOW RISK</div>
+                            <div class="status-badge bg-safe">Approved</div>
+                        {% endif %}
+
+                        {% if probability %}
+                            <div class="prob-score">{{ (probability|float * 100) | round(1) }}%</div>
+                            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                                Probability of Default
+                            </p>
+                            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 1rem;">
+                                Threshold: {{ threshold }}
+                            </p>
+                        {% endif %}
+                    {% else %}
+                        <div style="opacity: 0.3; margin: auto;">
+                            <svg width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            <p>Awaiting Data</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
     </div>
+
+    <div class="footer">
+        © 2026 FindDefault Inc. • Powered by PyTorch & Flask
+    </div>
+
+    <script>
+        const FEATURE_COUNT = 19; 
+
+        // 1. Define Business Labels (User Facing)
+        const FEATURE_CONFIG = [
+            { label: "Credit Score (FICO)", min: 300, max: 850,  pMin: -150, pMax: 150 }, // PC0 (Mean 18, Std 81 -> Range approx -140 to 180)
+            { label: "Annual Income ($)",   min: 20000, max: 200000, pMin: -200, pMax: 300 }, // PC1 (Mean 46, Std 125)
+            { label: "Loan Amount ($)",     min: 1000, max: 50000, pMin: -750, pMax: 1100 }, // PC2 (Mean 192, Std 474)
+            { label: "Account Balance ($)", min: 0, max: 100000, pMin: -190, pMax: 290 }, // PC3 (Mean 50, Std 120)
+            { label: "Employment (Yrs)",    min: 0, max: 40, pMin: -540, pMax: 400 }, // PC4
+            { label: "Debt-to-Income (%)",  min: 0, max: 100, pMin: -105, pMax: 70 }, // PC5
+            { label: "Open Credit Lines",   min: 0, max: 30, pMin: -320, pMax: 430 }, // PC6
+            { label: "Recent Inquiries",    min: 0, max: 20, pMin: -370, pMax: 330 }, // PC7
+            { label: "Derogatory Marks",    min: 0, max: 10, pMin: -40, pMax: 40 }, // PC8
+            { label: "Total Credit Limit",  min: 1000, max: 500000, pMin: -340, pMax: 370 }, // PC9
+            { label: "Utilization (%)",     min: 0, max: 100, pMin: -32, pMax: 34 }, // PC10
+            { label: "Payment History",     min: 0, max: 100, pMin: -67, pMax: 60 }, // PC11
+            { label: "Credit History (Yrs)",min: 0, max: 50, pMin: -90, pMax: 105 }, // PC12
+            { label: "Loan Term (Mo)",      min: 12, max: 72, pMin: -16, pMax: 17 }, // PC13
+            { label: "Interest Rate (%)",   min: 2, max: 30, pMin: -150, pMax: 130 }, // PC14
+            { label: "Monthly Installment", min: 50, max: 2000, pMin: -50, pMax: 56 }, // PC15
+            { label: "Home Own Score",      min: 0, max: 10, pMin: -17, pMax: 16 }, // PC16
+            { label: "Zip Code Risk",       min: 0, max: 100, pMin: -25, pMax: 24 }, // PC17
+            { label: "Policy Code",         min: 0, max: 5, pMin: -28, pMax: 24 }  // PC18
+        ];
+
+        // Generate Input Fields
+        const grid = document.getElementById('featureGrid');
+        
+        FEATURE_CONFIG.forEach((cfg, i) => {
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            
+            const label = document.createElement('label');
+            label.className = 'input-label';
+            label.textContent = cfg.label;
+            
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'feature-input';
+            input.id = `input-${i}`;
+            input.placeholder = `${cfg.min} - ${cfg.max}`;
+            input.required = true;
+            
+            // Store mapping logic in data attributes
+            input.dataset.idx = i;
+            input.dataset.userMin = cfg.min;
+            input.dataset.userMax = cfg.max;
+            input.dataset.modelMin = cfg.pMin;
+            input.dataset.modelMax = cfg.pMax;
+
+            div.appendChild(label);
+            div.appendChild(input);
+            grid.appendChild(div);
+        });
+
+        // Toggle Paste Area
+        function togglePasteArea() {
+            const area = document.getElementById('paste-area');
+            const isHidden = area.style.display === 'none' || area.style.display === '';
+            area.style.display = isHidden ? 'block' : 'none';
+        }
+
+        // SCALING LOGIC (User -> Model)
+        function scaleValue(val, uMin, uMax, mMin, mMax) {
+            // Linear mapping: y = mx + c
+            const pct = (val - uMin) / (uMax - uMin);
+            return mMin + (pct * (mMax - mMin));
+        }
+
+        // REVERSE SCALING (Model -> User)
+        function unscaleValue(val, uMin, uMax, mMin, mMax) {
+            const pct = (val - mMin) / (mMax - mMin);
+            return uMin + (pct * (uMax - uMin));
+        }
+
+        // Simulate Case
+        async function simulateCase(type) {
+            const statusEl = document.getElementById('simulation-status');
+            statusEl.textContent = "Loading real dataset example...";
+            
+            try {
+                const response = await fetch(`/api/sample?type=${type}`);
+                const result = await response.json();
+                
+                if (result.error) {
+                    statusEl.textContent = "Error: " + result.error;
+                    return;
+                }
+
+                // Fill Inputs (Reverse Scale: Model Data -> User Friendly View)
+                const data = result.data;
+                const values = Object.values(data);
+
+                values.forEach((modelVal, idx) => {
+                    if (idx < FEATURE_COUNT) {
+                        const input = document.getElementById(`input-${idx}`);
+                        if (input) {
+                            // Convert technical value to user-friendly value for display
+                            const uMin = parseFloat(input.dataset.userMin);
+                            const uMax = parseFloat(input.dataset.userMax);
+                            const mMin = parseFloat(input.dataset.modelMin);
+                            const mMax = parseFloat(input.dataset.modelMax);
+
+                            const userVal = unscaleValue(modelVal, uMin, uMax, mMin, mMax);
+                            input.value = Math.round(userVal * 100) / 100; // Round to 2 decimals
+
+                            input.style.backgroundColor = type === 'fraud' ? '#fee2e2' : '#d1fae5';
+                            setTimeout(() => input.style.backgroundColor = '#f8fafc', 500);
+                        }
+                    }
+                });
+
+                statusEl.innerHTML = `Loaded: <b>${result.label} Transaction</b>`;
+
+            } catch (err) {
+                console.error(err);
+                statusEl.textContent = "Failed to fetch simulation data.";
+            }
+        }
+
+        // Auto-fill inputs from CSV paste (Assumes Raw Model Data)
+        function autoFillInputs() {
+            const raw = document.getElementById('paste-area').value;
+            const values = raw.split(/[,\t\s]+/).filter(v => v.trim() !== '').map(Number);
+
+            if (values.length > 0) {
+                values.forEach((val, idx) => {
+                    if (idx < FEATURE_COUNT) {
+                        const input = document.getElementById(`input-${idx}`);
+                        if (input) {
+                            // Assume pasted data is raw model data, so reverse scale it
+                            const uMin = parseFloat(input.dataset.userMin);
+                            const uMax = parseFloat(input.dataset.userMax);
+                            const mMin = parseFloat(input.dataset.modelMin);
+                            const mMax = parseFloat(input.dataset.modelMax);
+                            
+                            input.value = Math.round(unscaleValue(val, uMin, uMax, mMin, mMax) * 100) / 100;
+                        }
+                    }
+                });
+            }
+        }
+
+        // Prepare data before submit
+        function prepareSubmission(e) {
+            e.preventDefault(); // Stop default form submit to handle scaling manually
+            
+            const inputs = [];
+            const form = document.getElementById('predictionForm');
+            
+            for (let i = 0; i < FEATURE_COUNT; i++) {
+                const input = document.getElementById(`input-${i}`);
+                let val = parseFloat(input.value);
+                
+                if (isNaN(val)) return; // Let HTML required handle it? No, need manual check
+                
+                // Scale DOWN to model range
+                const uMin = parseFloat(input.dataset.userMin);
+                const uMax = parseFloat(input.dataset.userMax);
+                const mMin = parseFloat(input.dataset.modelMin);
+                const mMax = parseFloat(input.dataset.modelMax);
+
+                const modelVal = scaleValue(val, uMin, uMax, mMin, mMax);
+                inputs.push(modelVal);
+            }
+
+            document.getElementById('combinedData').value = inputs.join(',');
+            form.submit();
+        }
+    </script>
 </body>
 </html>

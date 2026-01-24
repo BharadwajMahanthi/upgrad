@@ -1,0 +1,10 @@
+flask
+pandas
+numpy
+torch
+seaborn
+matplotlib
+scikit-learn
+imbalanced-learn
+xgboost
+cupy-cuda11x
