@@ -3,96 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fire Detection API</title>
-
-    <!-- Add Google Fonts for better typography -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap">
-
-    <!-- Add some custom CSS to style the page -->
+    <title>Fire Detection Live - High Precision</title>
+    <!-- Premium Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap">
     <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+        :root {
+            --primary: #ff4d4d;
+            --secondary: #4d79ff;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --success: #4ade80;
+            --warning: #fbbf24;
         }
 
-        .container {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            max-width: 500px;
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
             width: 100%;
+            padding: 15px;
+            text-align: center;
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 { margin: 0; font-size: 1.25rem; letter-spacing: 2px; color: var(--primary); font-weight: 600; }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            width: 100%;
+            max-width: 640px;
+            box-sizing: border-box;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        button {
+            background: var(--card);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 1;
+        }
+
+        button:hover { background: #334155; transform: translateY(-2px); }
+        button.active { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 15px rgba(255, 77, 77, 0.4); }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .status-card {
+            background: var(--card);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
             text-align: center;
         }
 
-        h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 20px;
+        .label { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .value { font-size: 1.1rem; font-weight: 600; display: block; }
+        .value.fire { color: #f87171; }
+        .value.smoke { color: var(--warning); }
+        .value.safe { color: var(--success); }
+
+        .fps-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #ccc;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        p {
-            color: #666;
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
-
-        input[type="file"] {
-            font-size: 16px;
-            margin-bottom: 20px;
-            padding: 10px;
-        }
-
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-
-        footer {
-            margin-top: 30px;
-            font-size: 14px;
-            color: #999;
-        }
-
-        footer a {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
+        /* Responsive Mobile Tweak */
+        @media (max-width: 480px) {
+            .video-wrapper { aspect-ratio: 3/4; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Fire Detection API</h1>
-        <p>Upload an image to check if it's Fire, Non-Fire, or Smoke.</p>
-
-        <form action="/predict" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept="image/*" required>
-            <br>
-            <input type="submit" value="Predict">
-        </form>
-
-        <footer>
-            <p>Powered by <a href="https://www.tensorflow.org/">TensorFlow</a> & <a href="https://flask.palletsprojects.com/">Flask</a></p>
-        </footer>
+    <div class="header">
+        <h1>LIVE FIRE LOCALIZATION</h1>
     </div>
+
+    <div class="main-container">
+        <div class="video-wrapper">
+            <video id="webcam" autoplay playsinline muted></video>
+            <canvas id="overlay"></canvas>
+            <div class="fps-badge" id="fps">FPS: 0</div>
+        </div>
+
+        <div class="status-grid">
+            <div class="status-card">
+                <span class="label">Classification</span>
+                <span id="res-class" class="value safe">Idle</span>
+            </div>
+            <div class="status-card">
+                <span class="label">Confidence</span>
+                <span id="res-conf" class="value">0%</span>
+            </div>
+            <div class="status-card" style="grid-column: span 2;">
+                <span class="label">System Latency</span>
+                <span id="res-latency" class="value">0ms</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="start-btn">Start Detection</button>
+            <button id="switch-btn">🔄 Switch</button>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('overlay');
+        const ctx = canvas.getContext('2d');
+        const classEl = document.getElementById('res-class');
+        const confEl = document.getElementById('res-conf');
+        const latencyEl = document.getElementById('res-latency');
+        const fpsEl = document.getElementById('fps');
+
+        let isRunning = false;
+        let useFrontCamera = false;
+        let lastFrameTime = Date.now();
+        let frameCount = 0;
+
+        async function setupCamera() {
+            try {
+                const constraints = {
+                    video: {
+                        facingMode: useFrontCamera ? "user" : "environment",
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    }
+                };
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = stream;
+                return new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        resolve(video);
+                    };
+                });
+            } catch (err) {
+                console.error("Camera access failed:", err);
+                alert("Please allow camera permissions to use this feature.");
+            }
+        }
+
+        async function processLoop() {
+            if (!isRunning) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            const startTime = Date.now();
+            
+            // Capture frame at model resolution for efficiency
+            const offscreen = document.createElement('canvas');
+            offscreen.width = 128;
+            offscreen.height = 128;
+            const offCtx = offscreen.getContext('2d');
+            offCtx.drawImage(video, 0, 0, 128, 128);
+            const imageData = offscreen.toDataURL('image/jpeg', 0.85);
+
+            try {
+                const response = await fetch('/predict_live', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: imageData })
+                });
+
+                const result = await response.json();
+                renderUI(result, Date.now() - startTime);
+            } catch (err) {
+                console.warn("Frame drop:", err);
+            }
+
+            // Sync with browser refresh rate
+            requestAnimationFrame(processLoop);
+        }
+
+        function renderUI(data, latency) {
+            latencyEl.innerText = latency + "ms";
+            
+            const cls = data.class ? data.class.toLowerCase() : "none";
+            classEl.innerText = data.class ? data.class.toUpperCase() : "SAFE";
+            confEl.innerText = data.confidence ? (data.confidence * 100).toFixed(1) + "%" : "0%";
+            
+            // Colors
+            if (cls.includes("fire")) classEl.className = "value fire";
+            else if (cls.includes("smoke")) classEl.className = "value smoke";
+            else classEl.className = "value safe";
+
+            // Visual Box
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (data.box) {
+                const { x, y, w, h } = data.box;
+                const color = cls.includes("fire") ? "#ff4d4d" : "#fbbf24";
+                
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 5;
+                ctx.setLineDash([]);
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = color;
+                
+                // Draw rounded box
+                const bx = x * canvas.width;
+                const by = y * canvas.height;
+                const bw = w * canvas.width;
+                const bh = h * canvas.height;
+
+                ctx.strokeRect(bx, by, bw, bh);
+                
+                // Badge
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = color;
+                ctx.fillRect(bx, by - 28, 110, 28);
+                ctx.fillStyle = "white";
+                ctx.font = "bold 13px Outfit";
+                ctx.fillText(`${cls.toUpperCase()}`, bx + 8, by - 8);
+            }
+
+            // FPS Badge
+            const now = Date.now();
+            const delta = now - lastFrameTime;
+            lastFrameTime = now;
+            if (frameCount++ % 10 === 0) {
+                fpsEl.innerText = "FPS: " + Math.round(1000 / delta);
+            }
+        }
+
+        document.getElementById('start-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('start-btn');
+            if (isRunning) {
+                isRunning = false;
+                btn.innerText = "Start Detection";
+                btn.classList.remove('active');
+            } else {
+                await setupCamera();
+                isRunning = true;
+                btn.innerText = "Stop Detection";
+                btn.classList.add('active');
+                processLoop();
+            }
+        });
+
+        document.getElementById('switch-btn').addEventListener('click', async () => {
+            useFrontCamera = !useFrontCamera;
+            if (isRunning) await setupCamera();
+        });
+    </script>
 </body>
 </html>
