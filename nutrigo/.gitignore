@@ -112,3 +112,5 @@ celerybeat-schedule
 .mypy_cache/
 
 upgrad-backup.git/
+data/
+models/
