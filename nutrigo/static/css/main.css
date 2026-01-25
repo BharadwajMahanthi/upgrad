@@ -1,0 +1,193 @@
+/* static/css/main.css */
+:root {
+    --primary: #059669; /* Emerald 600 - Fresh & Healthy */
+    --primary-hover: #047857;
+    --secondary: #0d9488; /* Teal 600 */
+    --accent: #f59e0b; /* Amber */
+    --bg-light: #f8fafc; /* Slate 50 */
+    --bg-white: #ffffff;
+    --text-main: #1e293b; /* Slate 800 */
+    --text-muted: #64748b; /* Slate 500 */
+    --border-light: #e2e8f0;
+    --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --glass-white: rgba(255, 255, 255, 0.8);
+}
+
+body {
+    background-color: var(--bg-light);
+    background-image: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0, transparent 50%), 
+                      radial-gradient(at 50% 0%, rgba(14, 165, 233, 0.05) 0, transparent 50%);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Premium Card */
+.glass-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: 1.25rem;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* Navigation */
+.navbar {
+    background: var(--glass-white);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.navbar-brand {
+    color: var(--text-main) !important;
+}
+
+.nav-link {
+    color: var(--text-muted) !important;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary) !important;
+}
+
+/* Buttons */
+.btn-premium {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-premium:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+    color: white;
+}
+
+.btn-outline-light {
+    border-color: var(--border-light);
+    color: var(--text-main);
+}
+
+.btn-outline-light:hover {
+    background-color: var(--bg-light);
+    color: var(--primary);
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 80px 0;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+}
+
+.hero-title span {
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Recipe Cards */
+.recipe-card-img {
+    height: 220px;
+    object-fit: cover;
+    border-top-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+    background-color: #f1f5f9;
+}
+
+/* Inputs */
+.form-control, .form-select {
+    background-color: #ffffff !important;
+    border: 1px solid var(--border-light) !important;
+    color: var(--text-main) !important;
+    border-radius: 0.75rem !important;
+}
+
+.form-control::placeholder {
+    color: #94a3b8 !important;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1) !important;
+    border-color: var(--primary) !important;
+}
+
+/* Badges */
+.badge.bg-primary {
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    color: var(--primary) !important;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.badge.bg-secondary {
+    background-color: rgba(13, 148, 136, 0.1) !important;
+    color: var(--secondary) !important;
+    border: 1px solid rgba(13, 148, 136, 0.2);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Health Score SVG */
+.health-circle-bg {
+    stroke: var(--border-light);
+}
+
+/* Table Style */
+.table {
+    color: var(--text-main) !important;
+}
+
+.table.table-dark {
+    background: white !important;
+    color: var(--text-main) !important;
+}
+
+.table-dark tr {
+    border-color: var(--border-light) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-light);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}

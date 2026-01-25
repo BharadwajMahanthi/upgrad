@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Match Logic - NutriGo AI{% endblock %}
+
+{% block content %}
+<div class="animate-fade">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="glass-card p-5 bg-white border-0 shadow-lg">
+                <div class="d-flex align-items-center mb-5">
+                    <div class="p-4 bg-primary bg-opacity-10 rounded-circle me-4">
+                        <i class="fas fa-brain fa-3x text-primary"></i>
+                    </div>
+                    <div>
+                        <h2 class="mb-1 text-dark fw-bold">Neural Mapping</h2>
+                        <p class="text-muted mb-0">Deciphering the recommendation for <strong>{{ explanation.recipe.recipe_name }}</strong></p>
+                    </div>
+                </div>
+
+                <!-- Collaborative Score -->
+                {% if explanation.svd_score_for_user %}
+                <div class="mb-5 p-5 bg-light rounded-4 border-0 position-relative">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h5 class="text-dark fw-bold mb-1"><i class="fas fa-user-check me-2 text-primary"></i>Personal Affinity</h5>
+                            <p class="text-muted small mb-0">Cross-referenced with behaviorally similar calorie-conscious profiles.</p>
+                        </div>
+                        <div class="text-end">
+                            <span class="h2 mb-0 fw-bold text-primary">{{ explanation.svd_score_for_user | round(2) }}</span>
+                            <span class="small text-muted d-block uppercase fw-bold">Target Rating</span>
+                        </div>
+                    </div>
+                    <div class="progress bg-white" style="height: 10px;">
+                        <div class="progress-bar bg-primary rounded-pill shadow-none" role="progressbar" style="width: {{ (explanation.svd_score_for_user / 5) * 100 }}%;"></div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Content Similarity -->
+                <div class="mb-5">
+                    <h5 class="text-dark fw-bold mb-4 uppercase small tracking-wider"><i class="fas fa-link me-2 text-secondary"></i>Contextual Bridges</h5>
+                    <p class="text-muted mb-4">Topologically adjacent recipes in our embedding space:</p>
+                    
+                    <div class="row g-3">
+                        {% for sim in explanation.top_similar_recipes %}
+                        <div class="col-12">
+                            <div class="p-4 bg-white rounded-3 d-flex justify-content-between align-items-center border border-light">
+                                <a href="{{ url_for('recipe_detail', recipe_id=sim.recipe_id) }}" class="text-dark text-decoration-none fw-bold hover-emerald">{{ sim.recipe_name }}</a>
+                                <div class="px-3 py-1 bg-light rounded-pill small fw-bold text-muted border border-light">
+                                    {{ (sim.similarity * 100) | round(0) }}% SIM
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Ingredient Matches -->
+                {% if explanation.ingredient_overlap_sample %}
+                <div class="mb-5">
+                    <h5 class="text-dark fw-bold mb-4 uppercase small tracking-wider"><i class="fas fa-tags me-2 text-warning"></i>Signature Overlap</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for ingredient in explanation.ingredient_overlap_sample %}
+                        <span class="badge bg-white shadow-sm text-dark p-2 px-3 border border-light fw-normal">{{ ingredient }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="d-grid gap-3 d-sm-flex mt-5 pt-4">
+                    <a href="{{ url_for('recipe_detail', recipe_id=explanation.recipe.recipe_id) }}" class="btn btn-premium px-5 py-3 flex-grow-1">
+                        Go to Recipe
+                    </a>
+                    <a href="{{ url_for('home') }}" class="btn btn-outline-light px-5 py-3">Back Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-emerald:hover { color: #059669 !important; }
+    .tracking-wider { letter-spacing: 0.05em; }
+</style>
+{% endblock %}

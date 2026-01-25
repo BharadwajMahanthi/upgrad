@@ -1,38 +1,70 @@
-<!-- templates/index.html -->
 {% extends "base.html" %}
 
-{% block title %}Home - Recipe Recommendation System{% endblock %}
+{% block title %}NutriGo - Personal AI Nutritionist{% endblock %}
 
 {% block content %}
-    <h1>Welcome to the Recipe Recommendation System</h1>
-    <p>Your personalized nutrition and recipe recommendation system.</p>
+<div class="hero-section animate-fade">
+    <h1 class="hero-title">Experience <span>Health AI</span></h1>
+    <p class="lead text-muted mb-5 mx-auto" style="max-width: 600px;">Hyper-personalized recipe recommendations using cutting-edge deep learning and nutritional science.</p>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="glass-card p-5 shadow-lg border-0 bg-white">
+                <h3 class="mb-4 fw-bold">Personalized Discovery</h3>
+                <form action="{{ url_for('recommend') }}" method="post" class="text-start">
+                    <div class="mb-4">
+                        <label for="user_id" class="form-label text-muted small fw-bold uppercase">Your Identity</label>
+                        <input type="text" class="form-control p-3 shadow-none border-light" id="user_id" name="user_id" placeholder="Enter your ID (e.g., 2048)" required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="preferences" class="form-label text-muted small fw-bold uppercase">Specific Cravings or Restrictions</label>
+                        <textarea class="form-control p-3 shadow-none border-light" id="preferences" name="preferences" rows="3" placeholder="e.g. low-carb, keto, vegan..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-premium w-100 py-3 shadow-sm mt-2">
+                        <i class="fas fa-wand-magic-sparkles me-2"></i>Generate Recommendations
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <!-- Navigation Links -->
-    <ul>
-        <li><a href="{{ url_for('register') }}">Register</a></li>
-        <li><a href="{{ url_for('update_profile') }}">Update Profile</a></li>
-        <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
-        <li><a href="{{ url_for('retrain_model_route') }}">Retrain Model</a></li>
-    </ul>
+<div class="row mt-5 animate-fade pt-5" style="animation-delay: 0.2s;">
+    <div class="col-md-4 mb-4">
+        <div class="glass-card p-4 h-100 text-center bg-white border-0">
+            <div class="mb-3 rounded-circle bg-emerald-light p-3 d-inline-block">
+                <i class="fas fa-heart-pulse fa-2x text-primary"></i>
+            </div>
+            <h5 class="fw-bold">Intelligent Scoring</h5>
+            <p class="text-muted small">Real-time healthiness prediction based on deep neural network analysis.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="glass-card p-4 h-100 text-center bg-white border-0">
+            <div class="mb-3 rounded-circle bg-teal-light p-3 d-inline-block">
+                <i class="fas fa-dna fa-2x text-emerald"></i>
+            </div>
+            <h5 class="fw-bold">Precision Matching</h5>
+            <p class="text-muted small">Collaborative filtering SVD models fine-tuned to your unique taste profile.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="glass-card p-4 h-100 text-center bg-white border-0">
+            <div class="mb-3 rounded-circle bg-amber-light p-3 d-inline-block">
+                <i class="fas fa-bolt fa-2x text-warning"></i>
+            </div>
+            <h5 class="fw-bold">Visual Reranking</h5>
+            <p class="text-muted small">Multi-modal AI considering both nutritional data and visual food aesthetics.</p>
+        </div>
+    </div>
+</div>
 
-    <!-- Main Content -->
-    <form action="{{ url_for('recommend') }}" method="post">
-        <label for="user_id">Enter Your User ID:</label><br>
-        <input type="text" id="user_id" name="user_id" required><br><br>
-
-        <label for="preferences">Enter Your Preferences (optional):</label><br>
-        <textarea id="preferences" name="preferences" rows="4" cols="50" placeholder="e.g., vegan, gluten-free"></textarea><br><br>
-
-        <input type="submit" value="Get Recommendations">
-    </form>
-
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+<style>
+    .bg-emerald-light { background-color: rgba(16, 185, 129, 0.1); }
+    .bg-teal-light { background-color: rgba(20, 184, 166, 0.1); }
+    .bg-amber-light { background-color: rgba(245, 158, 11, 0.1); }
+    .text-emerald { color: #10b981; }
+</style>
 {% endblock %}

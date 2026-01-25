@@ -1,68 +1,193 @@
-<!-- templates/recipe_detail.html -->
 {% extends "base.html" %}
 
-{% block title %}{{ recipe.recipe_name }} - Recipe Details{% endblock %}
+{% block title %}{{ recipe.recipe_name }} - NutriGo AI{% endblock %}
 
 {% block content %}
-    <h1>{{ recipe.recipe_name }}</h1>
-    {% if recipe.image_url %}
-        <img src="{{ recipe.image_url }}" alt="{{ recipe.recipe_name }}" width="300">
-    {% endif %}
+<div class="animate-fade">
+    <nav aria-label="breadcrumb" class="mb-5">
+        <ol class="breadcrumb bg-white p-3 rounded-pill shadow-sm border-0">
+            <li class="breadcrumb-item"><a href="{{ url_for('home') }}" class="text-decoration-none text-muted">Home</a></li>
+            <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">{{ recipe.recipe_name }}</li>
+        </ol>
+    </nav>
 
-    <h2>Ingredients:</h2>
-    <p>{{ recipe.ingredients }}</p>
+    <div class="row g-5">
+        <!-- Recipe Header & Image -->
+        <div class="col-lg-6 mb-4">
+            <div class="glass-card overflow-hidden bg-white border-0 h-100">
+                <div class="position-relative">
+                    {% if recipe.image_url %}
+                        <img src="{{ recipe.image_url }}" class="img-fluid w-100" alt="{{ recipe.recipe_name }}" style="max-height: 500px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                            <i class="fas fa-utensils fa-5x text-silver"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="p-5">
+                    <h1 class="fw-bold text-dark mb-4">{{ recipe.recipe_name }}</h1>
+                    <div class="d-flex flex-wrap gap-3 mb-5">
+                        <div class="px-4 py-2 bg-emerald-light rounded-pill border border-emerald">
+                            <span class="small fw-bold text-primary"><i class="fas fa-fire me-2"></i> {{ recipe.calories }} kcal</span>
+                        </div>
+                        <div class="px-4 py-2 bg-teal-light rounded-pill border border-teal">
+                            <span class="small fw-bold text-secondary"><i class="fas fa-dna me-2"></i> {{ recipe.protein }}g protein</span>
+                        </div>
+                        <div class="px-4 py-2 bg-amber-light rounded-pill border border-amber">
+                            <span class="small fw-bold text-warning"><i class="fas fa-leaf me-2"></i> {{ recipe.fiber }}g fiber</span>
+                        </div>
+                        <div class="px-4 py-2 bg-white rounded-pill shadow-sm border border-light">
+                            <span class="small fw-bold text-dark">
+                                <i class="fas fa-star text-warning me-2"></i> {{ "%.1f"|format(recipe.rating) if recipe.rating else "0.0" }} 
+                                <span class="text-muted ms-1">({{ recipe.review_nums or 0 }} reviews)</span>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3 mb-5">
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded-3 text-center border">
+                                <div class="small text-muted uppercase fw-bold mb-1" style="font-size: 0.65rem;">Sodium</div>
+                                <div class="fw-bold text-dark">{{ "%.0f"|format(recipe.sodium) if recipe.sodium else "--" }}mg</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-rose-light rounded-3 text-center border border-rose">
+                                <div class="small text-muted uppercase fw-bold mb-1" style="font-size: 0.65rem;">Sugars</div>
+                                <div class="fw-bold text-dark">{{ "%.1f"|format(recipe.sugars) if recipe.sugars else "--" }}g</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-indigo-light rounded-3 text-center border border-indigo">
+                                <div class="small text-muted uppercase fw-bold mb-1" style="font-size: 0.65rem;">Cholesterol</div>
+                                <div class="fw-bold text-dark">{{ "%.0f"|format(recipe.cholesterol) if recipe.cholesterol else "--" }}mg</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded-3 text-center border">
+                                <div class="small text-muted uppercase fw-bold mb-1" style="font-size: 0.65rem;">Sat. Fat</div>
+                                <div class="fw-bold text-dark">{{ "%.1f"|format(recipe.saturated_fat) if recipe.saturated_fat else "--" }}g</div>
+                            </div>
+                        </div>
+                    </div>
 
-    <h2>Instructions:</h2>
-    <p>{{ recipe.instructions }}</p>
+                    <div class="d-grid gap-3 d-sm-flex">
+                        <a href="{{ url_for('classify_recipe', recipe_id=recipe.recipe_id) }}" class="btn btn-premium flex-grow-1 py-3 px-4">
+                            <i class="fas fa-vial-circle-check me-2"></i>AI Health Audit
+                        </a>
+                        <a href="{{ url_for('explain_recipe', recipe_id=recipe.recipe_id, user_id=request.args.get('user_id', '')) }}" class="btn btn-outline-primary border-2 flex-grow-1 py-3 px-4 rounded-3">
+                            <i class="fas fa-brain me-2"></i>Match Logic
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <h2>Nutritional Information:</h2>
-    <ul>
-        <li>Calories: {{ recipe.calories }}</li>
-        <li>Protein: {{ recipe.protein }}</li>
-        <li>Fat: {{ recipe.fat }}</li>
-        <li>Carbohydrates: {{ recipe.carbohydrates }}</li>
-        <li>Fiber: {{ recipe.fiber }}</li>
-    </ul>
+        <!-- Recipe Content -->
+        <div class="col-lg-6 mb-4">
+            <div class="glass-card p-5 mb-5 bg-white border-0">
+                <h4 class="mb-4 text-dark fw-bold"><i class="fas fa-list-check me-3 text-primary"></i>Ingredients</h4>
+                <div class="text-muted leading-loose">
+                    {% if ingredients_list %}
+                        <ul class="list-unstyled mb-0">
+                            {% for ingredient in ingredients_list %}
+                            <li class="mb-2"><i class="fas fa-check-circle text-primary me-2 small"></i>{{ ingredient }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="mb-0 italic text-silver">No ingredient specific list available.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="glass-card p-5 bg-white border-0">
+                <h4 class="mb-4 text-dark fw-bold"><i class="fas fa-kitchen-set me-3 text-secondary"></i>Method</h4>
+                <div class="text-muted leading-loose" style="white-space: pre-line;">
+                {% if recipe.instructions and recipe.instructions != "None" %}
+                    {{ recipe.instructions }}
+                {% else %}
+                    <div class="p-4 bg-light rounded-3 text-center">
+                        <i class="fas fa-book-open fa-2x text-silver mb-3"></i>
+                        <p class="mb-0 italic">Culinary directions are currently being finalized. Please check back soon!</p>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <h2>Reviews:</h2>
-    {% if reviews %}
-        <ul>
-            {% for review in reviews %}
-                <li>
-                    <strong>User ID:</strong> {{ review.user_id }}<br>
-                    <strong>Rating:</strong> {{ review.rating }}<br>
-                    <strong>Comment:</strong> {{ review.comment }}<br>
-                    <em>Posted on: {{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</em>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No reviews yet. Be the first to review this recipe!</p>
-    {% endif %}
+    <!-- Reviews Section -->
+    <div class="row mt-5 pt-5 g-5">
+        <div class="col-md-7">
+            <h3 class="mb-5 text-dark fw-bold"><i class="fas fa-comments me-3 text-primary"></i>User Experiences</h3>
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="glass-card p-4 mb-4 bg-white border-0 border-start border-4 border-primary">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold text-dark fs-5">{{ review.user_id }}</span>
+                        <div class="text-warning small">
+                            {% for i in range(review.rating|int) %}<i class="fas fa-star"></i>{% endfor %}
+                            {% if review.rating % 1 != 0 %}<i class="fas fa-star-half-alt"></i>{% endif %}
+                        </div>
+                    </div>
+                    <p class="text-muted mb-3">{{ review.comment }}</p>
+                    <div class="small text-silver">{{ review.timestamp.strftime('%B %d, %Y') }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="glass-card p-5 text-center bg-white border-0">
+                    <i class="fas fa-comment-dots fa-3x text-light mb-4"></i>
+                    <p class="text-muted mb-0">No reviews discovered for this entry. Share your experience!</p>
+                </div>
+            {% endif %}
+        </div>
 
-    <h3>Submit Your Review:</h3>
-    <form method="post">
-        <label for="user_id">Your User ID:</label><br>
-        <input type="text" name="user_id" id="user_id" required><br><br>
+        <div class="col-md-5">
+            <div class="glass-card p-5 sticky-top bg-white border-0 shadow-sm" style="top: 120px;">
+                <h4 class="mb-4 text-dark fw-bold">Post a Review</h4>
+                <form method="post">
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-bold uppercase">Confirm Identity</label>
+                        <input type="text" name="user_id" class="form-control p-3 shadow-none border-light" placeholder="Your User ID" required>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between">
+                            <label class="form-label text-muted small fw-bold uppercase">Your Rating</label>
+                            <span class="text-primary fw-bold" id="ratingVal">2.5 / 5.0</span>
+                        </div>
+                        <input type="range" name="rating" class="form-range" min="0" max="5" step="0.5" id="ratingRange" value="2.5">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-bold uppercase">Feedback</label>
+                        <textarea name="comment" class="form-control p-3 shadow-none border-light" rows="4" placeholder="How did it taste?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-premium w-100 py-3 shadow-sm">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <label for="rating">Rating (0-5):</label><br>
-        <input type="number" name="rating" id="rating" min="0" max="5" step="0.5" required><br><br>
+<style>
+    .bg-emerald-light { background-color: rgba(16, 185, 129, 0.1); }
+    .bg-teal-light { background-color: rgba(20, 184, 166, 0.1); }
+    .bg-amber-light { background-color: rgba(245, 158, 11, 0.1); }
+    .bg-rose-light { background-color: rgba(225, 29, 72, 0.1); }
+    .bg-indigo-light { background-color: rgba(79, 70, 229, 0.1); }
+    .border-emerald { border-color: rgba(16, 185, 129, 0.2); }
+    .border-teal { border-color: rgba(20, 184, 166, 0.2); }
+    .border-amber { border-color: rgba(245, 158, 11, 0.2); }
+    .border-rose { border-color: rgba(225, 29, 72, 0.2); }
+    .border-indigo { border-color: rgba(79, 70, 229, 0.2); }
+    .text-silver { color: #cbd5e1; }
+    .leading-loose { line-height: 1.8; }
+</style>
 
-        <label for="comment">Comment:</label><br>
-        <textarea name="comment" id="comment" rows="4" cols="50" required></textarea><br><br>
-
-        <input type="submit" value="Submit Review">
-    </form>
-
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-
-    <a href="{{ url_for('home') }}">Back to Home</a>
+{% block extra_js %}
+<script>
+document.getElementById('ratingRange').addEventListener('input', function(e) {
+    document.getElementById('ratingVal').textContent = e.target.value + ' / 5.0';
+});
+</script>
+{% endblock %}
 {% endblock %}

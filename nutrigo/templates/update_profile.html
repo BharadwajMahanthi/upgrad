@@ -1,42 +1,65 @@
-<!-- templates/update_profile.html -->
 {% extends "base.html" %}
 
-{% block title %}Update Profile - Recipe Recommendation System{% endblock %}
+{% block title %}Update Bio-Profile - NutriGo{% endblock %}
 
 {% block content %}
-    <h1>Update Profile</h1>
-    <form method="post">
-        <label for="user_id">Enter Your User ID:</label><br>
-        <input type="text" name="user_id" id="user_id" required><br><br>
+<div class="row justify-content-center animate-fade">
+    <div class="col-md-9 col-lg-7">
+        <div class="glass-card p-5 bg-white border-0 shadow-lg">
+            <div class="text-center mb-5">
+                <div class="p-4 bg-secondary bg-opacity-10 d-inline-block rounded-circle mb-3">
+                    <i class="fas fa-id-card fa-3x text-secondary"></i>
+                </div>
+                <h2 class="fw-bold text-dark">Data Calibration</h2>
+                <p class="text-muted">Modify your biological and dietary preferences.</p>
+            </div>
+            
+            <form method="post">
+                <div class="mb-4 p-4 bg-emerald-light rounded-4 border border-emerald border-opacity-25">
+                    <label for="user_id" class="form-label text-primary small fw-bold uppercase mb-2">Identity Verification</label>
+                    <input type="text" class="form-control p-3 shadow-none border-emerald bg-white" name="user_id" id="user_id" placeholder="Confirm your User ID" required>
+                </div>
 
-        <label for="age">Age:</label><br>
-        <input type="number" name="age" id="age"><br><br>
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <label for="age" class="form-label text-muted small fw-bold uppercase">Age</label>
+                        <input type="number" class="form-control p-3 shadow-none border-light" name="age" id="age">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="weight" class="form-label text-muted small fw-bold uppercase">Weight (kg)</label>
+                        <input type="number" class="form-control p-3 shadow-none border-light" name="weight" id="weight" step="0.1">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="height" class="form-label text-muted small fw-bold uppercase">Height (cm)</label>
+                        <input type="number" class="form-control p-3 shadow-none border-light" name="height" id="height" step="0.1">
+                    </div>
+                </div>
 
-        <label for="weight">Weight (kg):</label><br>
-        <input type="number" name="weight" id="weight" step="0.1"><br><br>
+                <div class="mb-4">
+                    <label for="goal" class="form-label text-muted small fw-bold uppercase">Current Trajectory</label>
+                    <input type="text" class="form-control p-3 shadow-none border-light" name="goal" id="goal">
+                </div>
 
-        <label for="height">Height (cm):</label><br>
-        <input type="number" name="height" id="height" step="0.1"><br><br>
+                <div class="mb-4">
+                    <label for="health_details" class="form-label text-muted small fw-bold uppercase">Vital Updates</label>
+                    <textarea class="form-control p-3 shadow-none border-light" name="health_details" id="health_details" rows="3"></textarea>
+                </div>
 
-        <label for="goal">Goal:</label><br>
-        <input type="text" name="goal" id="goal"><br><br>
+                <div class="mb-5">
+                    <label for="preferences" class="form-label text-muted small fw-bold uppercase">New Directives</label>
+                    <textarea class="form-control p-3 shadow-none border-light" name="preferences" id="preferences" rows="3" placeholder="e.g. low-sodium, no dairy"></textarea>
+                </div>
 
-        <label for="health_details">Health Details:</label><br>
-        <textarea name="health_details" id="health_details" rows="4" cols="50"></textarea><br><br>
+                <button type="submit" class="btn btn-premium w-100 py-3 shadow-none">
+                    Recalibrate Profile
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 
-        <label for="preferences">Preferences:</label><br>
-        <textarea name="preferences" id="preferences" rows="4" cols="50" placeholder="e.g., vegan, gluten-free"></textarea><br><br>
-
-        <input type="submit" value="Update Profile">
-    </form>
-
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+<style>
+    .bg-emerald-light { background-color: rgba(16, 185, 129, 0.05); }
+    .border-emerald { border-color: rgba(16, 185, 129, 0.2); }
+</style>
 {% endblock %}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}AI Bio-Audit - NutriGo{% endblock %}
+
+{% block content %}
+<div class="animate-fade">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="glass-card overflow-hidden bg-white border-0 shadow-lg">
+                <div class="p-4 bg-emerald-light border-bottom border-emerald text-center">
+                    <h2 class="mb-0 fw-bold text-dark"><i class="fas fa-heart-pulse me-3 text-primary"></i>Nutritional Audit</h2>
+                </div>
+                
+                <div class="p-5">
+                    <div class="text-center mb-5">
+                        <h1 class="text-dark fw-bold mb-2">{{ recipe.recipe_name }}</h1>
+                        <p class="text-muted">Metabolic analysis by deep learning engine</p>
+                    </div>
+                    
+                    <div class="row align-items-center mb-5">
+                        <div class="col-md-5 text-center mb-5 mb-md-0">
+                            <div class="position-relative d-inline-block">
+                                <!-- Modern Circular Score -->
+                                <svg width="180" height="180" viewBox="0 0 160 160">
+                                    <circle cx="80" cy="80" r="70" fill="none" stroke="#f1f5f9" stroke-width="10" />
+                                    <circle cx="80" cy="80" r="70" fill="none" stroke="{% if is_healthy %}#10b981{% else %}#f59e0b{% endif %}" stroke-width="10" 
+                                            stroke-dasharray="{{ probability * 440 }} 440" stroke-linecap="round" transform="rotate(-90 80 80)" 
+                                            class="score-circle" />
+                                </svg>
+                                <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                    <span class="d-block h1 mb-0 fw-bold text-dark">{{ (probability * 100) | round(0) }}</span>
+                                    <span class="small text-muted fw-bold uppercase" style="letter-spacing: 1px;">Score</span>
+                                </div>
+                            </div>
+                            <h4 class="mt-4 {% if is_healthy %}text-primary{% else %}text-warning{% endif %} fw-bold">
+                                {% if is_healthy %}
+                                    <i class="fas fa-shield-check me-2"></i> Optimally Healthy
+                                {% else %}
+                                    <i class="fas fa-circle-exclamation me-2"></i> Balanced Choice
+                                {% endif %}
+                            </h4>
+                        </div>
+                        
+                        <div class="col-md-7">
+                            <div class="p-4 bg-light rounded-4 border border-light">
+                                <h6 class="text-muted small fw-bold mb-3 uppercase tracking-wider">AI DIAGNOSTIC</h6>
+                                <p class="text-dark mb-0 leading-relaxed">Our neural network evaluated this recipe's density. With a probability of <strong>{{ (probability * 100) | round(1) }}%</strong>, it fits within advanced wellness parameters for a balanced diet.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-4 text-dark fw-bold uppercase small tracking-wider"><i class="fas fa-chart-column me-2 text-primary"></i>Nutrient Profile</h5>
+                    <div class="row g-3 mb-5">
+                        <div class="col-6 col-sm-4 col-md-2">
+                            <div class="p-3 bg-white border border-light rounded-3 text-center shadow-sm">
+                                <div class="text-muted small mb-1">Energy</div>
+                                <div class="h5 mb-0 fw-bold text-dark">{{ recipe.calories | round(0) }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm-4 col-md-2">
+                            <div class="p-3 bg-white border border-light rounded-3 text-center shadow-sm">
+                                <div class="text-muted small mb-1">Protein</div>
+                                <div class="h5 mb-0 fw-bold text-primary">{{ recipe.protein | round(1) }}g</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm-4 col-md-2">
+                            <div class="p-3 bg-white border border-light rounded-3 text-center shadow-sm">
+                                <div class="text-muted small mb-1">Fat</div>
+                                <div class="h5 mb-0 fw-bold text-warning">{{ recipe.fat | round(1) }}g</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm-4 col-md-2">
+                            <div class="p-3 bg-white border border-light rounded-3 text-center shadow-sm">
+                                <div class="text-muted small mb-1">Carbs</div>
+                                <div class="h5 mb-0 fw-bold text-info">{{ recipe.carbohydrates | round(1) }}g</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm-4 col-md-2">
+                            <div class="p-3 bg-white border border-light rounded-3 text-center shadow-sm">
+                                <div class="text-muted small mb-1">Fiber</div>
+                                <div class="h5 mb-0 fw-bold text-success">{{ recipe.fiber | round(1) }}g</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <a href="{{ url_for('recipe_detail', recipe_id=recipe.recipe_id) }}" class="btn btn-premium px-5 py-3 flex-grow-1">
+                            <i class="fas fa-arrow-left me-2"></i>Return to Recipe
+                        </a>
+                        <a href="{{ url_for('home') }}" class="btn btn-outline-light border-1 px-5 py-3">Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-emerald-light { background-color: rgba(16, 185, 129, 0.05); }
+    .border-emerald { border-color: rgba(16, 185, 129, 0.1); }
+    .score-circle { transition: stroke-dasharray 1s ease-out; }
+    .leading-relaxed { line-height: 1.6; }
+    .tracking-wider { letter-spacing: 0.05em; }
+</style>
+{% endblock %}

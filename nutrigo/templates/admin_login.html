@@ -1,25 +1,45 @@
-<!-- templates/admin_login.html -->
 {% extends "base.html" %}
 
-{% block title %}Admin Login - Recipe Recommendation System{% endblock %}
+{% block title %}Admin Portal - NutriGo AI{% endblock %}
 
 {% block content %}
-    <h1>Admin Login</h1>
-    <form method="post">
-        <label for="username">Username:</label><br>
-        <input type="text" name="username" id="username" required><br><br>
-        <label for="password">Password:</label><br>
-        <input type="password" name="password" id="password" required><br><br>
-        <input type="submit" value="Login">
-    </form>
+<div class="row justify-content-center animate-fade">
+    <div class="col-md-5">
+        <div class="glass-card p-5 mt-5 bg-white border-0 shadow-lg">
+            <div class="text-center mb-5">
+                <div class="p-3 bg-emerald-light d-inline-block rounded-circle mb-3">
+                    <i class="fas fa-shield-halved fa-3x text-primary"></i>
+                </div>
+                <h2 class="fw-bold text-dark">Environment Admin</h2>
+                <p class="text-muted small">Standard protocol for system access.</p>
+            </div>
 
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+            <form method="post">
+                <div class="mb-4">
+                    <label for="username" class="form-label text-muted small uppercase fw-bold">Admin ID</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-light text-muted"><i class="fas fa-user"></i></span>
+                        <input type="text" name="username" class="form-control p-3 border-light shadow-none" id="username" placeholder="Enter username" required>
+                    </div>
+                </div>
+                
+                <div class="mb-5">
+                    <label for="password" class="form-label text-muted small uppercase fw-bold">Security Key</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-light text-muted"><i class="fas fa-key"></i></span>
+                        <input type="password" name="password" class="form-control p-3 border-light shadow-none" id="password" placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-premium w-100 py-3 shadow-none">
+                    Authenticate & Initialize
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-emerald-light { background-color: rgba(16, 185, 129, 0.1); }
+</style>
 {% endblock %}

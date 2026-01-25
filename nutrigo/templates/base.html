@@ -2,41 +2,113 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Recipe Recommendation System{% endblock %}</title>
-    <!-- Link to your CSS file -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NutriGo - Health & Nutrition{% endblock %}</title>
+    
+    <!-- Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
+    {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <header>
-        <h1>{% block header %}Welcome to the Recipe Recommendation System{% endblock %}</h1>
-        <!-- Navigation Menu -->
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('register') }}">Register</a></li>
-                <li><a href="{{ url_for('update_profile') }}">Update Profile</a></li>
-                <!-- Add other navigation links as needed -->
-            </ul>
-        </nav>
-    </header>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('home') }}">
+                <span class="text-primary"><i class="fas fa-heart-pulse me-2"></i>Nutri</span>Go
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'register' %}active{% endif %}" href="{{ url_for('register') }}">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'update_profile' %}active{% endif %}" href="{{ url_for('update_profile') }}">Profile</a>
+                    </li>
+                    {% if session.get('admin_logged_in') %}
+                    <li class="nav-item">
+                        <a class="nav-link text-warning fw-bold" href="{{ url_for('admin_dashboard') }}"><i class="fas fa-gauge-high me-1"></i>Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_logout') }}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_login') }}"><i class="fas fa-shield-halved me-1"></i>Admin</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class="flashes">
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+    <!-- Content -->
+    <div class="container py-5">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-white glass-card border-0 text-dark animate-fade mb-4 shadow-sm py-3 px-4 d-flex align-items-center" role="alert">
+                <i class="fas fa-info-circle text-primary me-3 fa-lg"></i> 
+                <div>{{ message }}</div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
 
-    <main>
         {% block content %}{% endblock %}
-    </main>
+    </div>
 
-    <footer>
-        <p>&copy; 2024 Recipe Recommendation System</p>
+    <!-- Footer -->
+    <footer class="mt-5 py-5 bg-white border-top">
+        <div class="container text-center text-muted">
+            <div class="mb-3">
+                <span class="h5 fw-bold text-dark"><i class="fas fa-heart-pulse text-primary me-2"></i>NutriGo AI</span>
+            </div>
+            <p class="small mb-0">&copy; 2024 NutriGo Platforms. Your Data, Your Health.</p>
+        </div>
     </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Image Fallback Handler -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const images = document.querySelectorAll('img');
+        images.forEach(img => {
+            img.onerror = function() {
+                // If it's a recipe card image, replace with FontAwesome placeholder
+                if (this.classList.contains('recipe-card-img')) {
+                    const parent = this.parentNode;
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'recipe-card-img w-100 d-flex align-items-center justify-content-center bg-light';
+                    placeholder.innerHTML = '<i class="fas fa-bowl-food fa-4x text-silver opacity-25"></i>';
+                    parent.replaceChild(placeholder, this);
+                } else {
+                    this.src = 'https://via.placeholder.com/400x300?text=NutriGo+AI';
+                }
+            };
+        });
+    });
+    </script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

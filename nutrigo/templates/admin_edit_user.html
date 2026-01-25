@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Edit User - Admin Portal{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animate-fade">
+    <div class="col-md-9 col-lg-7">
+        <div class="glass-card p-5 bg-white border-0 shadow-lg">
+            <div class="text-center mb-5">
+                <div class="p-4 bg-primary bg-opacity-10 d-inline-block rounded-circle mb-3">
+                    <i class="fas fa-user-pen fa-3x text-primary"></i>
+                </div>
+                <h2 class="fw-bold text-dark">Administrative Edit</h2>
+                <p class="text-muted">Modifying profile for User ID: <strong class="text-primary">{{ target_user.user_id }}</strong></p>
+            </div>
+            
+            <form method="post">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label for="age" class="form-label text-muted small fw-bold uppercase">Age</label>
+                        <input type="number" class="form-control p-3 shadow-none border-light" name="age" id="age" value="{{ target_user.age or '' }}" placeholder="Years">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="weight" class="form-label text-muted small fw-bold uppercase">Weight (kg)</label>
+                        <input type="number" class="form-control p-3 shadow-none border-light" name="weight" id="weight" step="0.1" value="{{ target_user.weight or '' }}" placeholder="e.g. 70.5">
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label for="height" class="form-label text-muted small fw-bold uppercase">Height (cm)</label>
+                        <input type="number" class="form-control p-3 shadow-none border-light" name="height" id="height" step="0.1" value="{{ target_user.height or '' }}" placeholder="e.g. 175.0">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="goal" class="form-label text-muted small fw-bold uppercase">Primary Goal</label>
+                        <input type="text" class="form-control p-3 shadow-none border-light" name="goal" id="goal" value="{{ target_user.goal or '' }}" placeholder="e.g. Weight Loss">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="health_details" class="form-label text-muted small fw-bold uppercase">Health Details</label>
+                    <textarea class="form-control p-3 shadow-none border-light" name="health_details" id="health_details" rows="3" placeholder="Condition context...">{{ target_user.health_details or '' }}</textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label for="preferences" class="form-label text-muted small fw-bold uppercase">Dietary Preferences</label>
+                    <textarea class="form-control p-3 shadow-none border-light" name="preferences" id="preferences" rows="3" placeholder="Preferences...">{{ target_user.preferences or '' }}</textarea>
+                </div>
+
+                <div class="mb-5 p-4 bg-light rounded-4 border border-light">
+                    <label for="new_password" class="form-label text-primary small fw-bold uppercase mb-2"><i class="fas fa-key me-2"></i>Reset Password (Optional)</label>
+                    <input type="password" class="form-control p-3 shadow-none border-white bg-white" name="new_password" id="new_password" placeholder="Leave blank to keep current password">
+                    <div class="form-text text-muted smaller mt-2">Entering a value here will generate a new hash for the user.</div>
+                </div>
+
+                <div class="d-flex gap-3">
+                    <button type="submit" class="btn btn-premium flex-grow-1 py-3 shadow-none">
+                        Save Changes
+                    </button>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-light px-5 py-3 border-1 rounded-3">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
