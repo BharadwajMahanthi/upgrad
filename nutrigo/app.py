@@ -7,7 +7,11 @@ import ast
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
-from surprise import SVD, Dataset, Reader
+try:
+    from surprise import SVD, Dataset, Reader
+except ImportError:
+    logging.warning("scikit-surprise not found. Recommendation engine will run in fallback mode.")
+    SVD = Dataset = Reader = None
 import os
 from datetime import datetime
 from flask_migrate import Migrate
@@ -571,15 +575,23 @@ def retrain_model():
     joblib.dump(le_recipe, LE_RECIPE_PATH)
 
     # Surprise trained on RAW IDs (important)
-    reader = Reader(rating_scale=(df["rating"].min(), df["rating"].max()))
-    data = Dataset.load_from_df(df[["user_id", "recipe_id", "rating"]], reader)
-    trainset = data.build_full_trainset()
+    if Reader and Dataset and SVD:
+        try:
+            reader = Reader(rating_scale=(df["rating"].min(), df["rating"].max()))
+            data = Dataset.load_from_df(df[["user_id", "recipe_id", "rating"]], reader)
+            trainset = data.build_full_trainset()
 
-    svd_model = SVD()
-    svd_model.fit(trainset)
+            svd_model = SVD()
+            svd_model.fit(trainset)
 
-    joblib.dump(svd_model, SVD_MODEL_PATH)
-    logging.info("Model retraining completed ✅")
+            joblib.dump(svd_model, SVD_MODEL_PATH)
+            logging.info("SVD model retraining completed ✅")
+        except Exception as e:
+            logging.error(f"SVD model training failed: {e}")
+            svd_model = None
+    else:
+        logging.warning("Skipping SVD training: scikit-surprise not installed.")
+        svd_model = None
 
     # Rebuild hybrid engine so it stays synced with DB
     try:
@@ -1081,8 +1093,12 @@ def update_profile():
 
 @app.route("/recommend", methods=["POST"])
 def recommend():
-    user_id = request.form.get("user_id").strip()
-    preferences_input = request.form.get("preferences", "").strip()
+    user_id = (request.form.get("user_id") or "").strip()
+    preferences_input = (request.form.get("preferences") or "").strip()
+
+    if not user_id or not preferences_input:
+        flash("Both User Identity and Preferences/Restrictions are required.")
+        return redirect(url_for("home"))
 
     logging.info(f"Received recommendation request for User ID: {user_id}")
 

@@ -1,284 +1,105 @@
-# Nutrigo
+# NutriGo - Personal AI Nutritionist v2.0
 
-![Nutrigo Logo](static/images/logo.png)
+![NutriGo Banner](static/images/logo.png)
 
-**Nutrigo** is a comprehensive recipe recommendation system designed to help users discover healthy and delicious recipes tailored to their nutritional preferences and dietary needs. Built with Flask, Nutrigo leverages machine learning models to provide personalized recommendations, ensuring that every meal aligns with your health goals.
-
----
-
-## 📖 Table of Contents
-
-- [Features](#features)
-- [Demo](#demo)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Technologies Used](#technologies-used)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+**NutriGo** is a high-performance recipe recommendation engine that combines deep learning with massive nutritional datasets to help users achieve their biological health goals. Version 2.0 introduces hyper-personalized recommendations, a stunning modern UI, and a direct integration of over 3.7 million historical user reviews.
 
 ---
 
-## 🎯 Features
+## 🚀 Key Upgrades in v2.0
 
-- **User Authentication:**
-  - Secure user registration and login.
-  - Profile management for updating personal preferences.
+### 📊 Massive Data Enrichment
 
-- **Personalized Recipe Recommendations:**
-  - Tailored suggestions based on user dietary preferences and health goals.
-  - Dynamic filtering of recipes to match nutritional needs.
+- **3.7 Million Reviews**: Integrated a colossal dataset of historical user experiences to power social proof in recommendations.
+- **Global Recipe Stats**: Every recipe now displays its original `aver_rate` (1-5 stars) and `review_nums`.
+- **Bio-Metric Nutrients**: Expanded nutritional profiles to include **Sodium, Sugars, Cholesterol, and Saturated Fat** for every recipe.
 
-- **Recipe Management:**
-  - Detailed recipe views with ingredients, instructions, and nutritional information.
-  - Admin dashboard for managing recipe data.
+### 🎨 Modern UI (Glassmorphism)
 
-- **Health Analytics:**
-  - Visualizations like confusion matrices and ROC curves to evaluate model performance.
-  - Training history graphs to monitor model improvements.
+- **Fresh Light Theme**: Completely redesigned with a premium, clean aesthetic using glassmorphism and smooth micro-animations.
+- **Personalization Guard**: "Your Identity" and "Preferences" are now mandatory, ensuring the AI has sufficient context for perfect matching.
+- **Enhanced Recipe View**: Redesigned detail pages with a "Nutritional Summary" grid and historical comment feeds.
 
-- **Model Retraining:**
-  - Interface for administrators to retrain machine learning models with new data.
+### ⚙️ Performance & Stability
 
-- **Responsive Design:**
-  - User-friendly interface optimized for both desktop and mobile devices.
+- **SQLite WAL Mode**: Enabled Write-Ahead Logging for seamless concurrent access (reads don't block writes).
+- **Intelligent Proxy**: Custom Flask route for serving high-quality local images (`data/core-data-images/`) with automatic HTTPS fallback.
+- **Resilient Models**: The application now starts in "Degraded Mode" even if heavy ML dependencies or models are missing, ensuring core functionality.
 
 ---
+
+## 🎯 Core Features
+
+- **Personalized Recommendations**:
+  - Uses Hybrid Engine (SVD + Content Filtering).
+  - Constraints based on user goals (e.g., Weight Mitigation, Muscle Growth).
+- **AI Health Audit**: Real-time healthiness probability scoring using a deep neural network.
+- **Admin Control Center**:
+  - Dedicated secure dashboard for user management.
+  - One-click model retraining and data integrity audits.
+- **Responsive Design**: Optimized for desktop, tablet, and mobile bio-tracking.
 
 ---
 
 ## 🛠️ Installation
 
-Follow these steps to set up Nutrigo on your local machine:
-
-### 1. **Clone the Repository**
+### 1. **Clone & Setup**
 
 ```bash
 git clone https://github.com/BharadwajMahanthi/upgrad.git
-cd upgrad
-```
-
-### 2. **Set Up Virtual Environment**
-
-It's recommended to use a virtual environment to manage dependencies.
-
-```bash
-# Create a virtual environment named 'venv'
+cd upgrad/nutrigo
 python -m venv venv
-
-# Activate the virtual environment
-# Windows:
-venv\Scripts\activate
-
-# macOS/Linux:
-source venv/bin/activate
-```
-
-### 3. **Install Dependencies**
-
-```bash
+source venv/bin/activate  # venv\Scripts\activate on Windows
 pip install -r requirements.txt
 ```
 
-### 4. **Set Up Environment Variables**
+### 2. **Environment Configuration**
 
-Create a `.env` file in the project root directory and add the following:
+Create a `.env` file in the `nutrigo/` directory:
 
 ```env
 FLASK_APP=app.py
 FLASK_ENV=development
-SECRET_KEY=your_secret_key
-SQLALCHEMY_DATABASE_URI=sqlite:///nutrigo.db
+SECRET_KEY=nutrigo-secure-key
+SQLALCHEMY_DATABASE_URI=sqlite:///data/nutrigo.db
 ```
 
-**Note:** Replace `your_secret_key` with a strong secret key. For production, consider using more secure database systems like PostgreSQL.
-
-### 5. **Initialize the Database**
+### 3. **Run v2.0**
 
 ```bash
-flask db init
-flask db migrate -m "Initial migration."
-flask db upgrade
+python app.py
 ```
 
-### 6. **Run the Application**
-
-```bash
-flask run
-```
-
-The application will be accessible at `http://127.0.0.1:5000/`.
+_Note: The app will automatically run `ensure_data_integrity()` and initialize the Hybrid Engine on startup._
 
 ---
 
-## 🚀 Usage
-
-### **1. User Registration and Login**
-
-- Navigate to the [Register](#) page to create a new account.
-- After registration, log in using your credentials.
-
-### **2. Updating Profile**
-
-- Access the [Update Profile](#) section to modify your dietary preferences and health goals.
-
-### **3. Exploring Recipes**
-
-- Browse through the [Recipe Recommendations](#) tailored to your profile.
-- Click on a recipe to view detailed information, including ingredients and nutritional facts.
-
-### **4. Admin Dashboard**
-
-- Admin users can access the [Admin Dashboard](#) to manage recipes and monitor model performance.
-- Use the [Retrain Model](#) feature to update the recommendation system with new data.
-
-### **5. Health Analytics**
-
-- View visual analytics like confusion matrices and ROC curves to understand model accuracy.
-- Monitor training history to track improvements over time.
-
----
-
-## 📁 Project Structure
+## 📁 Project Structure (nutrigo/)
 
 ```
 nutrigo/
-│
-├── app.py
-├── classifier.ipynb
-├── core-data-images/
-│   └── ... (image files)
-├── core-data-test_rating.csv
-├── core-data-train_rating.csv
-├── core-data-valid_rating.csv
-├── core-data_recipe.csv
-├── data/
-│   ├── combined_item_features.npz  # Managed by Git LFS
-│   ├── core_image_features.npy      # Managed by Git LFS
-│   └── raw_image_features.npy       # Managed by Git LFS
-├── healthiness_confusion_matrix.png
-├── healthiness_roc_curve.png
-├── .gitignore
-├── instance/
-│   └── nutrigo.db                   # Consider excluding if not necessary
-├── models/
-│   ├── healthiness_model.h5
-│   ├── le_recipe.pkl                # Managed by Git LFS
-│   ├── le_user.pkl                  # Managed by Git LFS
-│   ├── scaler.pkl                   # Managed by Git LFS
-│   ├── svd_model.pkl                # Managed by Git LFS
-│   ├── tfidf_vectorizer.pkl         # Managed by Git LFS
-│   └── training.log
-├── nutrigo.code-workspace
-├── raw-data-images/
-│   └── ... (image files)
-├── raw-data_interaction.csv
-├── raw-data_recipe.csv
-├── requirements.txt
-├── settings.json
+├── data/                    # SQLite database & CSV snapshots
+│   ├── core-data-images/    # High-res local recipe images
+│   └── nutrigo.db           # (WAL Enabled)
+├── models/                  # ML Artifacts (SVD, Scalar, TF-IDF)
 ├── static/
-│   ├── css/
-│   │   └── styles.css
+│   ├── css/                 # Modern light-theme stylesheets
 │   └── images/
-│       └── logo.png
-├── templates/
-│   ├── base.html
-│   ├── index.html
-│   ├── register.html
-│   ├── update_profile.html
-│   ├── recommendations.html
-│   ├── recipe_detail.html
-│   ├── admin_login.html
-│   ├── admin_dashboard.html
-│   └── retrain_model.html
-├── test.py
-├── training_history.png
-├── venv/                            # Excluded via .gitignore
-│   └── ... (virtual environment files)
-├── migrations/
-│   └── ... (Flask-Migrate migration files)
-└── __pycache__/
-    └── ... (compiled Python files)
+├── templates/               # Glassmorphism templates
+│   ├── classification.html  # AI Health Audit Detail
+│   ├── explain.html        # Recommendation Match Logic
+│   └── admin_dashboard.html # User Management
+└── app.py                   # Main Flask server & Route logic
 ```
 
 ---
 
-## 🧰 Technologies Used
+## 🧰 Powered By
 
-- **Backend:**
-  - [Flask](https://flask.palletsprojects.com/) - Web framework
-  - [Flask-Migrate](https://flask-migrate.readthedocs.io/) - Database migrations
-  - [Flask-Login](https://flask-login.readthedocs.io/) - User session management
-  - [SQLAlchemy](https://www.sqlalchemy.org/) - ORM for database interactions
-
-- **Frontend:**
-  - HTML5 & CSS3
-  - [Bootstrap](https://getbootstrap.com/) - CSS framework for responsive design
-
-- **Machine Learning:**
-  - [TensorFlow](https://www.tensorflow.org/) - Machine learning library
-  - [Scikit-learn](https://scikit-learn.org/) - ML algorithms and tools
-
-- **Data Visualization:**
-  - [Matplotlib](https://matplotlib.org/) - Plotting library
-
-- **Version Control:**
-  - [Git](https://git-scm.com/) - Version control system
-  - [GitHub](https://github.com/) - Repository hosting
-  - [Git LFS](https://git-lfs.github.com/) - Large file storage
-
-- **Others:**
-  - [Jupyter Notebook](https://jupyter.org/) - Interactive computing
-  - [Python-dotenv](https://github.com/theskumar/python-dotenv) - Environment variable management
-
----
-
-## 🤝 Contributing
-
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-### **Steps to Contribute**
-
-1. **Fork the Project**
-   - Click the [Fork](https://github.com/BharadwajMahanthi/upgrad/fork) button at the top right of the repository page.
-
-2. **Clone Your Fork**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/upgrad.git
-   cd upgrad
-   ```
-
-3. **Create a New Branch**
-   ```bash
-   git checkout -b feature/YourFeatureName
-   ```
-
-4. **Make Your Changes**
-   - Implement your feature or bug fix.
-   - Ensure code follows the project's coding standards.
-
-5. **Commit Your Changes**
-   ```bash
-   git commit -m "Add some feature"
-   ```
-
-6. **Push to the Branch**
-   ```bash
-   git push origin feature/YourFeatureName
-   ```
-
-7. **Open a Pull Request**
-   - Navigate to your fork on GitHub.
-   - Click the **New Pull Request** button.
-   - Provide a clear description of your changes.
-
-### **Guidelines**
-
-- **Code Quality:** Ensure your code is clean, well-documented, and follows best practices.
-- **Testing:** Write tests for new features or bug fixes.
-- **Documentation:** Update the README and other relevant documentation as needed.
-- **Respect:** Be respectful and considerate in all interactions.
+- **Core**: Flask, SQLAlchemy, Jinja2
+- **Intelligence**: TensorFlow, Scikit-learn, Scikit-surprise (Optional)
+- **Design**: Bootstrap 5, FontAwesome, Google Fonts (Outfit/Inter)
+- **Concurrency**: SQLite WAL Mode
 
 ---
 
@@ -292,21 +113,11 @@ Distributed under the [MIT License](LICENSE).
 
 **Bharadwaj Mahanthi**
 
-- **GitHub:** [@BharadwajMahanthi](https://github.com/BharadwajMahanthi)
-- **Email:** mbpd.1999@gmail.com
-
-Project Link: [https://github.com/BharadwajMahanthi/upgrad](https://github.com/BharadwajMahanthi/upgrad)
-
----
-
-## 📝 Acknowledgements
-
-- [Flask Documentation](https://flask.palletsprojects.com/)
-- [Bootstrap Documentation](https://getbootstrap.com/docs/)
-- [GitHub Guides](https://guides.github.com/)
-- [GitHub's Git Large File Storage](https://git-lfs.github.com/)
-- [Real Python](https://realpython.com/) for excellent Python tutorials
+- **GitHub**: [@BharadwajMahanthi](https://github.com/BharadwajMahanthi)
+- **Email**: mbpd.1999@gmail.com
+- **Project**: [NutriGo AI](https://github.com/BharadwajMahanthi/upgrad)
 
 ---
 
-*This README was generated with the help of ChatGPT.*
+_Developed by Bharadwaj Mahanthi_  
+
